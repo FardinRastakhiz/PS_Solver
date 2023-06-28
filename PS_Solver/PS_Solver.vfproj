@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application" Version="11.0" ProjectIdGuid="{BB6254B9-1DE4-46AE-BB77-2959F70E1164}">
+	<Platforms>
+		<Platform Name="Win32"/>
+		<Platform Name="x64"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Debug|x64">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" InlineFunctionExpansion="expandAnySuitable" AdditionalIncludeDirectories="C:\Users\Raoof101\Dropbox\PoreFlow\Working_Codes\poreflow_win11_vs2022\solution_and_codes\src\src_slatec\" DebugParameter="debugParameterAll" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="C:\Users\Raoof101\Dropbox\PoreFlow\Working_Codes\poreflow_win11_vs2022\solution_and_codes\src\src_slatec\" IgnoreDefaultLibraryNames="LIBCMT" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|Win32">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|x64">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" AdditionalIncludeDirectories="C:\Users\Raoof101\Dropbox\PoreFlow\Fortran_examples\PS_Solver_omid\PS_Solver\PS_Solver\src_slatec\" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="C:\Users\Raoof101\Dropbox\PoreFlow\Fortran_examples\PS_Solver_omid\PS_Solver\PS_Solver\src_slatec\" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd;h;inc"/>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<Filter Name="src_slatec">
+		<File RelativePath=".\src_slatec\blas1_d.f90"/>
+		<File RelativePath=".\src_slatec\d1mach.f"/>
+		<File RelativePath=".\src_slatec\daxpy_slatec.f"/>
+		<File RelativePath=".\src_slatec\dbcg.f"/>
+		<File RelativePath=".\src_slatec\dchkw.f"/>
+		<File RelativePath=".\src_slatec\dcopy_slatec.f"/>
+		<File RelativePath=".\src_slatec\ddot_slatec.f"/>
+		<File RelativePath=".\src_slatec\dnrm2_slatec.f"/>
+		<File RelativePath=".\src_slatec\ds2y.f"/>
+		<File RelativePath=".\src_slatec\dsdbcg.f"/>
+		<File RelativePath=".\src_slatec\dsdi.f"/>
+		<File RelativePath=".\src_slatec\dsds.f"/>
+		<File RelativePath=".\src_slatec\dsmtv.f"/>
+		<File RelativePath=".\src_slatec\dsmv.f"/>
+		<File RelativePath=".\src_slatec\fdump.f"/>
+		<File RelativePath=".\src_slatec\frngdb.f"/>
+		<File RelativePath=".\src_slatec\i1mach.f"/>
+		<File RelativePath=".\src_slatec\isdbcg.f"/>
+		<File RelativePath=".\src_slatec\j4save.f"/>
+		<File RelativePath=".\src_slatec\qs2i1d.f"/>
+		<File RelativePath=".\src_slatec\xercnt.f"/>
+		<File RelativePath=".\src_slatec\xerhlt.f"/>
+		<File RelativePath=".\src_slatec\xermsg.f"/>
+		<File RelativePath=".\src_slatec\xerprn.f"/>
+		<File RelativePath=".\src_slatec\xersve.f"/>
+		<File RelativePath=".\src_slatec\xgetua.f"/>
+		<File RelativePath=".\src_slatec\y12maf.f"/>
+		<File RelativePath=".\src_slatec\y12mbf.f"/>
+		<File RelativePath=".\src_slatec\y12mcf.f"/>
+		<File RelativePath=".\src_slatec\y12mdf.f"/></Filter>
+		<File RelativePath=".\main.f90"/>
+		<File RelativePath="..\x64\Release\Solver.lib"/></Filter></Files>
+	<Globals/></VisualStudioProject>
