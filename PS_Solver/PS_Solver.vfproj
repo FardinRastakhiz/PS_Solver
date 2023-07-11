@@ -80,5 +80,5 @@
 		<File RelativePath=".\src_slatec\y12mcf.f"/>
 		<File RelativePath=".\src_slatec\y12mdf.f"/></Filter>
 		<File RelativePath=".\main.f90"/>
-		<File RelativePath="..\x64\Release\Solver.lib"/></Filter></Files>
+		<File RelativePath="..\x64\Debug\Solver.lib"/></Filter></Files>
 	<Globals/></VisualStudioProject>

@@ -8,12 +8,12 @@
     !!!note: in the project folder i have put two matrices for examples. a larger size (with name append of _L) and a medium size (with name append of _M). 
     
     !medium size
-    character(len=30) :: matrixFile = "Matrix_M", bFile = "Pknown_M"
-    integer, parameter :: n = 11720, nnz = 27839     ! medium size (with name append of _M)
+    !character(len=30) :: matrixFile = "Matrix.txt", bFile = "Pknown.txt"
+    !integer, parameter :: n = 22591, nnz = 67068     ! medium size (with name append of _M)
     
     !larger size
-    !integer, parameter :: n = 997350, nnz = 26218238     !larger size (with name append of _L)
-    !character(len=30) :: matrixFile = "Matrix_L", bFile = "Pknown_L"
+    integer, parameter :: n = 997350, nnz = 26218238     !larger size (with name append of _L)
+    character(len=30) :: matrixFile = "Matrix_L", bFile = "Pknown_L"
     
     
     integer, allocatable :: rowIndex(:), colIndex(:)
