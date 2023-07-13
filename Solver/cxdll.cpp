@@ -129,6 +129,19 @@ Eigen::VectorXd spmv(int numRows, int numNonzero, int* rowIndices, int* colIndic
     return b;
 }
 
+Eigen::VectorXd spmv2(int numRows, int numNonzero, int* rowIndices, int* colIndices, double* values, Eigen::VectorXd x) {
+    Eigen::VectorXd b(numRows);
+    // Initialize b to 0
+    for (int i = 0; i < numRows; i++) {
+        b[i] = 0.0;
+    }
+    // Perform sparse matrix-vector multiplication
+    for (int j = 0; j < numNonzero; j++) {
+        b[rowIndices[j] - 1] += values[j] * x(colIndices[j] - 1);
+    }
+    return b;
+}
+
 void fill_vector(Eigen::VectorXd& X) {
     ifstream infile(READING_X_FILENAME);
     int i = 0;
@@ -173,7 +186,7 @@ void fill_vector(Eigen::VectorXd& X) {
         cout << "Reading B Finished" << endl;
         cout << "Solving ..." << endl;
         Eigen::VectorXd X = solve(A, B , numRows);
-        Eigen::VectorXd solvedB = spmv(numRows, numNonzero, rowIndices, colIndices, values, X);
+        Eigen::VectorXd solvedB = spmv2(numRows, numNonzero, rowIndices, colIndices, values, X);
         write_to_file(X , X_FILE_NAME);
         // write solved b to file
         write_to_file(solvedB , SOLVEDB_FILE_NAME);
