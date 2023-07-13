@@ -18,6 +18,9 @@ using namespace std;
 using namespace std::chrono;
 typedef Eigen::Triplet<double> T;
 const string X_FILE_NAME = "X";
+const string SOLVEDB_FILE_NAME = "SOLVEDB";
+const string READING_X_FILENAME = "Slatec_X";
+const string SLATECB_FILENAME = "SLATECB";
 
 
 
@@ -85,9 +88,9 @@ Eigen::VectorXd buildGuessedX(int numRows) {
 Eigen::VectorXd solve(Eigen::SparseMatrix<double>& A, Eigen::VectorXd& B , int numRows) {
     auto start = high_resolution_clock::now();
     Eigen::VectorXd x(numRows);
-    //Eigen::ConjugateGradient<Eigen::SparseMatrix<double>> solver;
+    Eigen::ConjugateGradient<Eigen::SparseMatrix<double>> solver;
     // uncomment the code bellow to use all cpu cores
-    Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower | Eigen::Upper > solver;
+    //Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower | Eigen::Upper > solver;
     solver.compute(A);
     x = solver.solve(B);
     //x = solver.solveWithGuess(B, buildGuessedX(numRows));
@@ -100,13 +103,39 @@ Eigen::VectorXd solve(Eigen::SparseMatrix<double>& A, Eigen::VectorXd& B , int n
     return x;
 
 }
-void write_to_file(Eigen::VectorXd X) {
-    std::ofstream file(X_FILE_NAME);
+void write_to_file(Eigen::VectorXd X , string filename) {
+    std::ofstream file(filename);
     if (file.is_open())
     {
         for (int i = 0; i < X.size(); i++) {
             file << X[i] << endl;
         }
+    }
+}
+Eigen::VectorXd spmv(int numRows, int numNonzero, int* rowIndices, int* colIndices, double* values, Eigen::VectorXd x) {
+    Eigen::VectorXd b(numRows);
+    // Initialize b to 0
+    for (int i = 0; i < numRows; i++) {
+        b[i] = 0.0;
+    }
+    // Perform sparse matrix-vector multiplication
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numNonzero; j++) {
+            if (rowIndices[j] - 1 == i) {
+                b[i] += x(colIndices[j] - 1) * values[j];
+            }
+        }
+    }
+    return b;
+}
+
+void fill_vector(Eigen::VectorXd& X) {
+    ifstream infile(READING_X_FILENAME);
+    int i = 0;
+    for (string line; getline(infile, line); i++)
+    {
+        double value = stod(line);
+        X(i) = value;
     }
 }
 
@@ -126,6 +155,7 @@ void write_to_file(Eigen::VectorXd X) {
         int n = numRows;
         cout << "Reading A ..." << endl;
         Eigen::VectorXd B(n);
+        Eigen::VectorXd solvedBVector(n);
         Eigen::SparseMatrix<double> A(n, n);
         std::vector<T> tripletList;
         fill_triplet(tripletList ,numNonzero,rowIndices,colIndices,values);
@@ -143,7 +173,21 @@ void write_to_file(Eigen::VectorXd X) {
         cout << "Reading B Finished" << endl;
         cout << "Solving ..." << endl;
         Eigen::VectorXd X = solve(A, B , numRows);
-        write_to_file(X);
+        Eigen::VectorXd solvedB = spmv(numRows, numNonzero, rowIndices, colIndices, values, X);
+        write_to_file(X , X_FILE_NAME);
+        // write solved b to file
+        write_to_file(solvedB , SOLVEDB_FILE_NAME);
+
+        //uncomment below lines for multiplying slatec solver
+        //int n = numRows;
+        //Eigen::VectorXd X(numRows);
+        //fill_vector(X);
+        //Eigen::VectorXd solvedB = spmv(numRows, numNonzero, rowIndices, colIndices, values, X);
+        //// write solved b to file
+        //write_to_file(solvedB , SLATECB_FILENAME);
+
+
+
 
     }
 
