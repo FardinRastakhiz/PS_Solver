@@ -54,6 +54,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 12.2.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -121,6 +122,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>cusparse.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,9 +146,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="algorithm_factories.h" />
     <ClInclude Include="CgAlgorithm.h" />
     <ClInclude Include="IAlgorithm.h" />
     <ClInclude Include="IPreconditioner.h" />
+    <ClInclude Include="preconditioner_factories.h" />
     <ClInclude Include="Solver.h" />
     <ClInclude Include="SparseMatrix.h" />
     <ClInclude Include="sparse_equation_solver.h" />
@@ -155,7 +159,9 @@
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="algorithm_factories.cpp" />
     <ClCompile Include="CgAlgorithm.cpp" />
+    <ClCompile Include="preconditioner_factories.cpp" />
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="SparseMatrix.cpp" />
     <ClCompile Include="sparse_equation_solver.cpp" />
@@ -169,5 +175,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 12.2.targets" />
   </ImportGroup>
 </Project>

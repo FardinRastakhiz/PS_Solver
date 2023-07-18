@@ -1,8 +1,8 @@
 #pragma once
-
 #include "IAlgorithm.h"
-using IAlgorithm = ses::IAlgorithm;
 
-IAlgorithm ses::create_cg_algorithm();
-IAlgorithm ses::create_pcg_algorithm();
+using namespace ses;
+
+IAlgorithm create_cg_algorithm();
+IAlgorithm create_pcg_algorithm();
 

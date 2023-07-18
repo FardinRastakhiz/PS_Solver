@@ -10,6 +10,6 @@ namespace ses {
 	protected:
 
 	public:
-		Solver(SparseMatrix A, Vector b, );
+		Solver(SparseMatrix A, Vector b);
 	};
 }

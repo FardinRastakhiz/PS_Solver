@@ -37,6 +37,12 @@
     <Filter Include="Header Files\ses\preconditioners">
       <UniqueIdentifier>{daef4d8b-4e2c-41df-bec6-3f3804d819cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ses\Factories">
+      <UniqueIdentifier>{7cd54802-83e6-4cc5-a40f-5ce634b4c6c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ses\Factories">
+      <UniqueIdentifier>{e582bf78-76d1-4806-b259-d9855440d6a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -66,6 +72,12 @@
     <ClInclude Include="CgAlgorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="algorithm_factories.h">
+      <Filter>Header Files\ses\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="preconditioner_factories.h">
+      <Filter>Header Files\ses\Factories</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -85,6 +97,12 @@
     </ClCompile>
     <ClCompile Include="CgAlgorithm.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm_factories.cpp">
+      <Filter>Source Files\ses\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="preconditioner_factories.cpp">
+      <Filter>Source Files\ses\Factories</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

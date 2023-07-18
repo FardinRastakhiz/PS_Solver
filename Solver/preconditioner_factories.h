@@ -1,6 +1,6 @@
 #pragma once
 #include "IPreconditioner.h"
 
-using IPreconditioner = ses::IPreconditioner;
+using namespace ses;
 
-IPreconditioner ses::create_sos_preconditioner();
+IPreconditioner create_sos_preconditioner();

@@ -3,4 +3,4 @@
 #include "Vector.h"
 
 
-class ses::Solver;
+//class ses::Solver;
