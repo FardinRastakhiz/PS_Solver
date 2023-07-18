@@ -27,7 +27,7 @@ CXDLL_API double* ses_symmetric_cpu_cg(int numRows, int numNonzero, int* rowIndi
 	int* colIndices, double* values, double* rhs, double* result) {
 	ses::IAlgorithm algorithm = ses::CgAlgorithm();
 
-	return nan;
+	return 0;
 }
 
 
