@@ -1,11 +1,10 @@
 #include "pch.h"
 #include "preconditioner_factories.h"
 
+using namespace ses;
 
-namespace ses {
-	IPreconditioner create_sos_preconditioner()
-	{
-		throw "Function is not implemented";
-	}
 
+IPreconditioner create_sos_preconditioner()
+{
+	throw "Function is not implemented";
 }
