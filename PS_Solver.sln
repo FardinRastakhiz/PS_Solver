@@ -10,6 +10,8 @@ Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "PS_Solver", "PS_Solver\PS_S
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Solver", "Solver\Solver.vcxproj", "{69A0C3D2-CBD7-43F2-89CD-F1A31E6C835A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDATests", "CUDATests\CUDATests.vcxproj", "{FCCC7052-8472-4AC4-82AB-A39A11BEFAED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +36,14 @@ Global
 		{69A0C3D2-CBD7-43F2-89CD-F1A31E6C835A}.Release|x64.Build.0 = Release|x64
 		{69A0C3D2-CBD7-43F2-89CD-F1A31E6C835A}.Release|x86.ActiveCfg = Release|Win32
 		{69A0C3D2-CBD7-43F2-89CD-F1A31E6C835A}.Release|x86.Build.0 = Release|Win32
+		{FCCC7052-8472-4AC4-82AB-A39A11BEFAED}.Debug|x64.ActiveCfg = Debug|x64
+		{FCCC7052-8472-4AC4-82AB-A39A11BEFAED}.Debug|x64.Build.0 = Debug|x64
+		{FCCC7052-8472-4AC4-82AB-A39A11BEFAED}.Debug|x86.ActiveCfg = Debug|x64
+		{FCCC7052-8472-4AC4-82AB-A39A11BEFAED}.Debug|x86.Build.0 = Debug|x64
+		{FCCC7052-8472-4AC4-82AB-A39A11BEFAED}.Release|x64.ActiveCfg = Release|x64
+		{FCCC7052-8472-4AC4-82AB-A39A11BEFAED}.Release|x64.Build.0 = Release|x64
+		{FCCC7052-8472-4AC4-82AB-A39A11BEFAED}.Release|x86.ActiveCfg = Release|x64
+		{FCCC7052-8472-4AC4-82AB-A39A11BEFAED}.Release|x86.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
