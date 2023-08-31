@@ -1,10 +1,10 @@
 // cxdll.cpp : Defines the exported functions for the DLL.
 //
-#define _CRT_SECURE_NO_WARNINGS
+
+
 #include "pch.h"
 #include "framework.h"
 #include "sparse_equation_solver.h"
-#include <iostream>
 #include <omp.h>
 #include "./Eigen/Eigen"
 #include <fstream>
@@ -14,14 +14,67 @@
 #include <chrono>
 #include <future>
 #include <ctype.h>
+#include <iostream>
+#include <string>
 
+
+#ifndef VIENNACL_WITH_OPENCL
+#define VIENNACL_WITH_OPENCL
+#endif
+
+#ifndef NDEBUG
+#define BOOST_UBLAS_NDEBUG
+#endif
+
+#ifndef VIENNACL_WITH_UBLAS
+#define VIENNACL_WITH_UBLAS
+#endif
 #include "IAlgorithm.h"
 #include "IPreconditioner.h"
 
 
 #include "CgAlgorithm.h"
+#include <iostream>
+//#include "petscksp.h"
+//#include "petscviennacl.h"
+//#include <petscdevice.h> 
+//PETSC_EXTERN PetscErrorCode PCCreate_Jacobi(PC);
+//
+// ublas includes
+//
+#include <boost/numeric/ublas/io.hpp>
+#include <boost/numeric/ublas/triangular.hpp>
+#include <boost/numeric/ublas/matrix_sparse.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/matrix_proxy.hpp>
+#include <boost/numeric/ublas/operation.hpp>
+#include <boost/numeric/ublas/operation_sparse.hpp>
+#include <boost/numeric/ublas/io.hpp>
+#include <boost/numeric/ublas/lu.hpp>
 
+//
+// ViennaCL includes
+//
+#include "viennacl/scalar.hpp"
+#include "viennacl/vector.hpp"
+#include "viennacl/compressed_matrix.hpp"
+#include "viennacl/coordinate_matrix.hpp"
+#include "viennacl/linalg/prod.hpp"
+#include "viennacl/linalg/ilu.hpp"
+#include "viennacl/linalg/jacobi_precond.hpp"
+#include "viennacl/linalg/cg.hpp"
+#include "viennacl/linalg/bicgstab.hpp"
+#include "viennacl/linalg/gmres.hpp"
+#include "viennacl/io/matrix_market.hpp"
+#include "viennacl/ocl/backend.hpp"
+#include "viennacl/matrix.hpp"
+#include "viennacl/linalg/matrix_operations.hpp"
+#include "viennacl/linalg/norm_2.hpp"
+#include <viennacl/linalg/opencl/kernels/compressed_matrix.hpp>
+#include <viennacl/io/matrix_market.hpp>
+#include "viennacl/linalg/power_iter.hpp"
 
+#include <time.h>
 
 CXDLL_API double* ses_symmetric_cpu_cg(int numRows, int numNonzero, int* rowIndices,
 	int* colIndices, double* values, double* rhs, double* result) {
@@ -35,6 +88,7 @@ CXDLL_API double* ses_symmetric_cpu_cg(int numRows, int numNonzero, int* rowIndi
 
 using namespace std;
 using namespace std::chrono;
+using namespace boost::numeric;
 typedef Eigen::Triplet<double> T;
 
 
@@ -174,49 +228,310 @@ void fill_vector(Eigen::VectorXd& X) {
 }
 
 // This is an example of an exported function.
-CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* colIndices, double* values, double* rhs, double* result) {
-	if (is_symmetric) {
-		cout << "the matrix is symmetric" << endl;
-	}
-	else {
-		cout << "the matrix is not symmetric" << endl;
-	}
-	Eigen::initParallel();
-	int m = 8;
-	omp_set_num_threads(m);
-	Eigen::setNbThreads(m);
-	int n = numRows;
-	cout << "Reading A ..." << endl;
-	Eigen::VectorXd B(n);
-	Eigen::VectorXd solvedBVector(n);
-	Eigen::SparseMatrix<double> A(n, n);
-	std::vector<T> tripletList;
-	fill_triplet(tripletList, numNonzero, rowIndices, colIndices, values);
-	A.setFromTriplets(tripletList.begin(), tripletList.end());
-	//if (is_positive_difinite(A))
-	//{
-	//    cout << "Matrix is positive difinite" << endl;
-	//}
-	//else {
-	//    cout << "Matrix is not positive definite" << endl;
-	//}
-	cout << "Reading A Finished" << endl;
-	cout << "Reading B ..." << endl;
-	fill_vector(B, numRows, rhs);
-	cout << "Reading B Finished" << endl;
-	cout << "Solving ..." << endl;
-	Eigen::VectorXd X = solve(A, B, numRows);
-	Eigen::VectorXd solvedB = spmv2(numRows, numNonzero, rowIndices, colIndices, values, X);
-	write_to_file(X, X_FILE_NAME);
-	// write solved b to file
-	write_to_file(solvedB, SOLVEDB_FILE_NAME);
 
-	//uncomment below lines for multiplying slatec solver
-	//int n = numRows;
-	//Eigen::VectorXd X(numRows);
-	//fill_vector(X);
-	//Eigen::VectorXd solvedB = spmv(numRows, numNonzero, rowIndices, colIndices, values, X);
-	//// write solved b to file
-	//write_to_file(solvedB , SLATECB_FILENAME);
+//CXDLL_API void solve_matrix2(int numRows, int numNonzero, int* rowIndices, int* colIndices, double* values, double* rhs, double* result) {
+//	
+//	//check mpi avaliability
+//	PetscErrorCode ierr;
+//	PetscMPIInt    size = 8, rank;
+//	PetscDeviceContext context{};
+//	ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
+//	PetscLogDefaultBegin();
+//	//ierr = PetscOptionsSetValue(NULL, "-vec_type", "viennacl");
+//	//PetscPrintf(PETSC_COMM_WORLD, "error code %d", ierr);
+//	//ierr = PetscOptionsSetValue(NULL, "-mat_type", "aijviennacl");
+//	//PetscPrintf(PETSC_COMM_WORLD, "error code %d", ierr);
+//	//ierr = PetscOptionsSetValue(NULL, "-viennacl_backend", "OpenCL");
+//	//PetscPrintf(PETSC_COMM_WORLD, "error code %d", ierr);
+//	//ierr = PetscOptionsSetValue(NULL, "-viennacl_ocl_device", "2");
+//	//PetscPrintf(PETSC_COMM_WORLD, "error code %d", ierr);
+//	ierr = PetscOptionsSetValue(NULL, "-log_view", NULL);
+//	PetscPrintf(PETSC_COMM_WORLD, "error code %d", ierr);
+//	PetscDevice device;
+//	PetscDevice device2;
+//
+//	
+//	
+//	//viennacl::ocl::get_platforms();
+//	//for(int i = 0 ;i< viennacl::ocl::get_platforms().size() ; i++)
+//	//std::cout << viennacl::ocl::get_platforms()[i].info() << endl;
+//	//std::cout << "Platform info: " << pf.info() << std::endl;
+//	std::vector<viennacl::ocl::device> devices = viennacl::ocl::get_platforms()[2].devices(CL_DEVICE_TYPE_GPU);
+//	viennacl::ocl::setup_context(0, devices[0]);
+//	//for(int i = 0 ;i< devices.size(); i++)
+//	//std::cout << devices[i].name() << std::endl;
+//	//// Create an OpenCL context using the device ID
+//
+//	//cl_platform_id platform_id;   // Platform ID
+//	//cl_device_id device_id;       // Device ID
+//
+//	//// Get the platform and device IDs
+//	//clGetPlatformIDs(1, &platform_id, NULL);
+//	//clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_GPU, 1, &device_id, NULL);
+//	//cl_context context = clCreateContext(NULL, 1, &device_id, NULL, NULL, NULL);
+//
+//	// Set the OpenCL context for ViennaCL
+//	//cout << viennacl::ocl::get_platforms()[2].id();
+//
+//	
+//	
+//	//PetscDeviceCreate( PETSC_DECIDE, &device);
+//	//PetscDeviceContextSetDevice(context, device);
+//	//PetscDeviceView(device, NULL);
+//	//viennacl::ocl::switch_device(devices[0]);
+//	if (ierr) {
+//		PetscPrintf(PETSC_COMM_WORLD, "PetscInitialize failed with error code: %d\n", ierr);
+//	}
+//
+//	ierr = MPI_Comm_size(MPI_COMM_WORLD, &size);
+//	if (ierr) {
+//		PetscPrintf(PETSC_COMM_WORLD, "MPI_Comm_size failed with error code: %d\n", ierr);
+//		PetscFinalize();
+//	}
+//
+//	ierr = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+//	if (ierr) {
+//		PetscPrintf(PETSC_COMM_WORLD, "MPI_Comm_rank failed with error code: %d\n", ierr);
+//		PetscFinalize();
+//	}
+//
+//	PetscPrintf(PETSC_COMM_WORLD, "MPI initialized with %d process(es). Current rank: %d\n", size, rank);
+//	
+//	/*std::cout << "Device info: " << viennacl::ocl::current_device().info() << std::endl;*/
+//	Vec            x, b, u , y;       /* approx solution, RHS, exact solution */
+//	Mat            A;             /* linear system matrix */
+//	KSP            ksp;           /* linear solver context */
+//	PetscReal      norm;          /* norm of solution error */
+//	PC             pc;
+//	 // Create a parallel matrix
+//	 //MatCreateAIJViennaCL(PETSC_COMM_SELF, PETSC_DECIDE , PETSC_DECIDE, numRows , numRows , NULL , NULL,NULL,NULL, &A);
+//	 MatCreate(PETSC_COMM_WORLD, &A);
+//	 MatSetSizes(A, PETSC_DECIDE, PETSC_DECIDE, numRows, numRows);
+//	 MatSetType(A , MATAIJVIENNACL);
+//	 MatSetFromOptions(A);
+//	 MatSetUp(A);
+//	 
+//	 // Set matrix values
+//	 for (int i = 0; i < numNonzero; i++) { MatSetValue(A, rowIndices[i] - 1, colIndices[i] - 1, values[i], INSERT_VALUES); }
+//	 MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
+//	 MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
+//
+//	 // Create vectors
+//	 VecCreate(PETSC_COMM_WORLD, &b);
+//	 VecSetType(b, VECVIENNACL);
+//	 VecSetSizes(b, PETSC_DECIDE, numRows);
+//	 VecSetFromOptions(b);
+//	 VecDuplicate(b, &x);
+//	 VecDuplicate(b, &u);
+//	 VecDuplicate(b, &y);
+//
+//	 // Set rhs values
+//	 for (int i = 0; i < numRows; i++) { VecSetValue(b, i, rhs[i], INSERT_VALUES); }
+//
+//	 VecAssemblyBegin(b);
+//	 VecAssemblyEnd(b);
+//	auto start = high_resolution_clock::now();
+//	ierr = KSPCreate(PETSC_COMM_WORLD, &ksp);
+//	ierr = KSPSetOperators(ksp, A, A);
+//	ierr = KSPSetFromOptions(ksp);
+//	ierr = KSPSolve(ksp, b, x);
+//	 auto stop = high_resolution_clock::now();
+//	 auto duration = duration_cast<microseconds>(stop - start);
+//	 PetscPrintf(PETSC_COMM_WORLD, "Time taken by solver: %d microseconds" , duration.count());
+//	 // Optional: Print the solution
+//	 PetscViewer viewer;
+//	 PetscViewerASCIIOpen(PETSC_COMM_SELF, "x.txt", &viewer); // open an ASCII file for writing
+//	 VecView(x, viewer); // save the vector to the file
+//	 PetscViewerDestroy(&viewer); // close the file
+//	 MatMult(A, x, y);
+//	/* Now, multiply A by x and check if it equals b */
+//	ierr = MatMult(A, x, y); // y = A*x
+//	 // Optional: Print the rhs
+//	 PetscViewer vrhs;
+//	 PetscViewerASCIIOpen(PETSC_COMM_SELF, "rhs.txt", &vrhs); // open an ASCII file for writing
+//	 VecView(y, vrhs); // save the vector to the file
+//	 PetscViewerDestroy(&vrhs); // close the file
+//	ierr = VecAXPY(y, -1.0, b); // y = y - b
+//	ierr = VecNorm(y, NORM_2, &norm); // Calculate the 2-norm of y
+//	if (norm > 1.e-14) {
+//		PetscPrintf(PETSC_COMM_WORLD, "A*x does not equal b, norm of error %g\n", norm);
+//	}
+//
+//	ierr = KSPDestroy(&ksp);
+//	ierr = VecDestroy(&x);
+//	ierr = VecDestroy(&b);
+//	ierr = MatDestroy(&A);
+//	ierr = PetscFinalize();
+//
+//
+//}
+#include "viennacl/forwards.h"
+#include "viennacl/vector.hpp"
+#include "viennacl/tools/tools.hpp"
+#include "viennacl/linalg/sparse_matrix_operations.hpp"
+
+
+
+
+
+
+
+
+
+
+ //#define VIENNACL_BUILD_INFO
+#ifndef NDEBUG
+ #define NDEBUG
+#endif
+
+#define VIENNACL_WITH_UBLAS 1
+
+#include <boost/numeric/ublas/triangular.hpp>
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/vector_proxy.hpp>
+#include <boost/numeric/ublas/matrix_sparse.hpp>
+#include <boost/numeric/ublas/operation_sparse.hpp>
+#include <boost/numeric/ublas/lu.hpp>
+
+
+#include "viennacl/scalar.hpp"
+#include "viennacl/vector.hpp"
+#include "viennacl/coordinate_matrix.hpp"
+#include "viennacl/compressed_matrix.hpp"
+#include "viennacl/ell_matrix.hpp"
+#include "viennacl/hyb_matrix.hpp"
+#include "viennacl/sliced_ell_matrix.hpp"
+#include "viennacl/linalg/prod.hpp"
+#include "viennacl/linalg/norm_2.hpp"
+#include "viennacl/io/matrix_market.hpp"
+#include "viennacl/linalg/ilu.hpp"
+#include "viennacl/tools/timer.hpp"
+
+
+#include <vector>
+#include "custom_monitor.h"
+#include "utilities.h"
+
+#define BENCHMARK_RUNS          10
+
+
+CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* colIndices, double* values, double* rhs, double* result22) {
+
+	std::vector<viennacl::ocl::platform> platforms = viennacl::ocl::get_platforms();
+	std::vector<viennacl::ocl::device> devices = platforms[2].devices(CL_DEVICE_TYPE_GPU);
+	viennacl::ocl::setup_context(0, devices[0]);
+
+	/*cout << "platform size is:" << platforms.size() << endl;
+	for (size_t i = 0; i < platforms.size(); i++)
+	{
+		std::vector<viennacl::ocl::device> pl_devices = platforms[i].devices();
+
+		cout << "device size is:" << pl_devices.size() << endl;
+		for (size_t j = 0; j < pl_devices.size(); j++)
+		{
+			cout << "for platform[" << i << "] device[" << j << "] is:" << pl_devices[j].name() << endl;
+		}
+	}*/
+
+	viennacl::ocl::device current_device = viennacl::ocl::current_device();
+	cout << "current device 1:" << current_device.name() << endl;
+
+	typedef float       ScalarType;
+	unsigned int num_rows = numRows, num_cols = numRows, num_nonzeros = numNonzero;
+	ublas::vector<ScalarType> b(num_rows);
+	ublas::vector<ScalarType> ref_result(num_cols);
+	ublas::vector<ScalarType> resultx;
+	ublas::mapped_matrix<ScalarType> ublas_matrix(num_rows, num_cols, num_nonzeros);
+	ublas_matrix.reserve(num_nonzeros);
+	cout << "fill A matrix:" << endl;
+
+	clock_t mat_fill_start = clock();
+	for (int i = 0; i < num_nonzeros; i++) {
+		if (i % 1000000 == 0)
+			cout << i << endl;
+		ublas_matrix(rowIndices[i], colIndices[i]) = values[i];
+		ublas_matrix(colIndices[i], rowIndices[i]) = values[i];
+	}
+	clock_t mat_fill_end = clock();
+	cout << "mat fill duration: " << (double)(mat_fill_end - mat_fill_start) / CLOCKS_PER_SEC << endl;
+
+
+	cout << "fill b vector:" << endl;
+	clock_t vec_fill_start = clock();
+	for (int i = 0; i < num_rows; i++) {
+		if (i % 100000 == 0)
+			cout << i << endl;
+		b(i) = rhs[i];
+	}
+	clock_t vec_fill_end = clock();
+	std::cout << "ublas_matrix.nnz(): " << ublas_matrix.nnz() << "    rhs.size(): " << b.size() << "   ref_result.size(): " << ref_result.size()
+		<< ",  duration: " << (double)(vec_fill_end - vec_fill_start) / CLOCKS_PER_SEC << std::endl;
+
+
+
+	std::size_t vcl_size = b.size();
+	viennacl::compressed_matrix<ScalarType> vcl_compressed_matrix;
+	viennacl::coordinate_matrix<ScalarType> vcl_coordinate_matrix;
+	viennacl::vector<ScalarType> vcl_rhs(vcl_size);
+	viennacl::vector<ScalarType> vcl_result(vcl_size);
+	viennacl::vector<ScalarType> vcl_rhs_result(vcl_size);
+	viennacl::vector<ScalarType> vcl_ref_result(vcl_size);
+
+
+	//viennacl::compressed_matrix<ScalarType> vcl_compressed_matrix_t = viennacl::linalg::trans(vcl_compressed_matrix);
+
+
+	cout << "copying to gpu ..." << endl;
+	viennacl::copy(b.begin(), b.end(), vcl_rhs.begin());
+	viennacl::copy(ref_result.begin(), ref_result.end(), vcl_ref_result.begin());
+	viennacl::copy(ublas_matrix, vcl_compressed_matrix);
+
+	std::cout << vcl_size;
+
+	std::cout << "----- CG Method -----" << std::endl;
+
+	//clock_t startt = clock();
+	//result = viennacl::linalg::solve(ublas_matrix, b, viennacl::linalg::cg_tag(1.0E-16, 1000));
+	//clock_t endt = clock();
+	//printf("Time taken: %.2fs\n", (double)(endt - startt) / CLOCKS_PER_SEC);
+
+	current_device = viennacl::ocl::current_device();
+	cout << "current device 2:" << current_device.name() << endl;
+	clock_t startt = clock();
+	
+
+
+	viennacl::linalg::cg_tag my_tag(1.0E-16, 100);
+	viennacl::linalg::cg_solver<viennacl::vector<ScalarType>> _my_solver(my_tag);
+	
+	vcl_result = viennacl::zero_vector<ScalarType>(vcl_rhs.size(), viennacl::traits::context(vcl_rhs));
+
+	for (size_t i = 0; i < 1; i++)
+	{
+
+		clock_t sub_startt = clock();
+		monitor_user_data<viennacl::compressed_matrix<ScalarType>, viennacl::vector<ScalarType> > 
+			my_monitor_data(vcl_compressed_matrix, vcl_rhs, vcl_result);
+
+		_my_solver.set_monitor(my_custom_monitor<viennacl::vector<ScalarType>, ScalarType, viennacl::compressed_matrix<ScalarType> >,
+			&my_monitor_data);
+		_my_solver.set_initial_guess(vcl_result);
+		vcl_result = _my_solver(vcl_compressed_matrix, vcl_rhs);
+		clock_t sub_endt = clock();
+
+		vcl_rhs_result = viennacl::linalg::prod(vcl_compressed_matrix, vcl_result);
+		viennacl::vector<ScalarType> differences = vcl_rhs_result - vcl_rhs;
+		float l2 = viennacl::linalg::norm_2(differences);
+		std::cout << i << ": " << l2 << ",  duration: " << (double)(sub_endt - sub_startt) / CLOCKS_PER_SEC << std::endl;
+		if (l2 < 0.3)
+			break;
+	}
+
+
+	clock_t endt = clock();
+	printf("Time taken: %.2fs\n", (double)(endt - startt) / CLOCKS_PER_SEC);
+
+	//save_vector(vcl_result, "gmres_x.txt");
+	//save_vector(vcl_rhs_result, "gmres_b.txt");
 
 }

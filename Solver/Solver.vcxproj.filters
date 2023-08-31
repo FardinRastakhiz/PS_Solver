@@ -78,6 +78,12 @@
     <ClInclude Include="preconditioner_factories.h">
       <Filter>Header Files\ses\Factories</Filter>
     </ClInclude>
+    <ClInclude Include="custom_monitor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
