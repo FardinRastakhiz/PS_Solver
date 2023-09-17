@@ -1,6 +1,5 @@
 #pragma once
 
-typedef float       ScalarType;
 
 
 #include "viennacl/scalar.hpp"
@@ -9,8 +8,8 @@ typedef float       ScalarType;
 #include <stdio.h>
 //#include <iostream>
 //#include <fstream>
-
-void save_vector(viennacl::vector<ScalarType> x, const char* file_name) {
+template<typename T>
+void save_vector(viennacl::vector<T> x, const char* file_name) {
     int size = x.size();
     FILE* fp;
     fp = fopen(file_name, "w");
