@@ -437,6 +437,8 @@ CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* c
 	cout << "current device 1:" << current_device.name() << endl;
 
 	typedef float       ScalarType;
+	std::cout << "size of float: " << sizeof(float) << std::endl;
+	std::cout << "size of float: " << sizeof(double) << std::endl;
 	unsigned int num_rows = numRows, num_cols = numRows, num_nonzeros = numNonzero;
 	ublas::vector<ScalarType> b(num_rows);
 	ublas::vector<ScalarType> ref_result(num_cols);
@@ -449,8 +451,15 @@ CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* c
 	for (int i = 0; i < num_nonzeros; i++) {
 		if (i % 1000000 == 0)
 			cout << i << endl;
-		ublas_matrix(rowIndices[i], colIndices[i]) = values[i];
-		ublas_matrix(colIndices[i], rowIndices[i]) = values[i];
+		ublas_matrix(rowIndices[i]-1, colIndices[i] - 1) = values[i];
+		if (rowIndices[i] != colIndices[i])
+		{
+			ublas_matrix(colIndices[i] - 1, rowIndices[i] - 1) = values[i];
+		}
+		else
+		{
+			ublas_matrix(colIndices[i] - 1, rowIndices[i] - 1) += values[i];
+		}
 	}
 	clock_t mat_fill_end = clock();
 	cout << "mat fill duration: " << (double)(mat_fill_end - mat_fill_start) / CLOCKS_PER_SEC << endl;
@@ -470,8 +479,8 @@ CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* c
 
 
 	std::size_t vcl_size = b.size();
-	viennacl::compressed_matrix<ScalarType> vcl_compressed_matrix;
-	viennacl::coordinate_matrix<ScalarType> vcl_coordinate_matrix;
+	viennacl::sliced_ell_matrix<ScalarType> vcl_matrix;
+	//viennacl::coordinate_matrix<ScalarType> vcl_coordinate_matrix;
 	viennacl::vector<ScalarType> vcl_rhs(vcl_size);
 	viennacl::vector<ScalarType> vcl_result(vcl_size);
 	viennacl::vector<ScalarType> vcl_rhs_result(vcl_size);
@@ -484,7 +493,7 @@ CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* c
 	cout << "copying to gpu ..." << endl;
 	viennacl::copy(b.begin(), b.end(), vcl_rhs.begin());
 	viennacl::copy(ref_result.begin(), ref_result.end(), vcl_ref_result.begin());
-	viennacl::copy(ublas_matrix, vcl_compressed_matrix);
+	viennacl::copy(ublas_matrix, vcl_matrix);
 
 	std::cout << vcl_size;
 
@@ -501,28 +510,38 @@ CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* c
 	
 
 
-	viennacl::linalg::cg_tag my_tag(1.0E-16, 100);
-	viennacl::linalg::cg_solver<viennacl::vector<ScalarType>> _my_solver(my_tag);
-	
-	vcl_result = viennacl::zero_vector<ScalarType>(vcl_rhs.size(), viennacl::traits::context(vcl_rhs));
+	viennacl::linalg::gmres_tag my_tag(1.0E-10, 1000, 50U);
+	viennacl::linalg::gmres_solver<viennacl::vector<ScalarType>> _my_solver(my_tag);
 
+	//viennacl::copy(b.begin(), b.end(), vcl_result.begin());
+	 vcl_result = viennacl::zero_vector<ScalarType>(vcl_rhs.size(), viennacl::traits::context(vcl_rhs));
+	//_my_solver.set_initial_guess(vcl_result);
 	for (size_t i = 0; i < 1; i++)
 	{
 
-		clock_t sub_startt = clock();
-		monitor_user_data<viennacl::compressed_matrix<ScalarType>, viennacl::vector<ScalarType> > 
-			my_monitor_data(vcl_compressed_matrix, vcl_rhs, vcl_result);
+		/*monitor_user_data<viennacl::sliced_ell_matrix<ScalarType>, viennacl::vector<ScalarType> > 
+			my_monitor_data(vcl_matrix, vcl_rhs, vcl_result);
 
-		_my_solver.set_monitor(my_custom_monitor<viennacl::vector<ScalarType>, ScalarType, viennacl::compressed_matrix<ScalarType> >,
+		_my_solver.set_monitor(my_custom_monitor<viennacl::vector<ScalarType>, ScalarType, viennacl::sliced_ell_matrix<ScalarType> >,
 			&my_monitor_data);
-		_my_solver.set_initial_guess(vcl_result);
-		vcl_result = _my_solver(vcl_compressed_matrix, vcl_rhs);
+		_my_solver.set_initial_guess(vcl_result);*/
+
+		clock_t sub_startt = clock();
+		vcl_result = _my_solver(vcl_matrix, vcl_rhs);
 		clock_t sub_endt = clock();
 
-		vcl_rhs_result = viennacl::linalg::prod(vcl_compressed_matrix, vcl_result);
+		vcl_rhs_result = viennacl::linalg::prod(vcl_matrix, vcl_result);
 		viennacl::vector<ScalarType> differences = vcl_rhs_result - vcl_rhs;
+		double max_value = -100000;
+		for (size_t i = 0; i < differences.size(); i++)
+		{
+			if (differences[i]> max_value)
+			{
+				max_value = differences[i];
+			}
+		}
 		float l2 = viennacl::linalg::norm_2(differences);
-		std::cout << i << ": " << l2 << ",  duration: " << (double)(sub_endt - sub_startt) / CLOCKS_PER_SEC << std::endl;
+		std::cout << i << ", norm2: " << l2 << ", max_error" << max_value <<",  duration: " << (double)(sub_endt - sub_startt) / CLOCKS_PER_SEC << std::endl;
 		if (l2 < 0.3)
 			break;
 	}
@@ -531,7 +550,7 @@ CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* c
 	clock_t endt = clock();
 	printf("Time taken: %.2fs\n", (double)(endt - startt) / CLOCKS_PER_SEC);
 
-	//save_vector(vcl_result, "gmres_x.txt");
-	//save_vector(vcl_rhs_result, "gmres_b.txt");
+	save_vector(vcl_result, "gmres_x.txt");
+	save_vector(vcl_rhs_result, "gmres_b.txt");
 
 }
