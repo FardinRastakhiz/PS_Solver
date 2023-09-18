@@ -1,6 +1,14 @@
 #pragma once
+
 #include "IPreconditioner.h"
 
 namespace ses {
-	IPreconditioner create_sos_preconditioner();
+	enum Algorithm
+	{
+		CG,
+		PCG,
+		BIPCG,
+		GMRES
+	};
 }
+
