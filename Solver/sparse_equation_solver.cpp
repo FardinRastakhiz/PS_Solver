@@ -1,10 +1,12 @@
 // cxdll.cpp : Defines the exported functions for the DLL.
 //
 
-
 #include "pch.h"
-#include "framework.h"
 #include "sparse_equation_solver.h"
+
+
+
+#include "framework.h"
 #include <omp.h>
 #include "./Eigen/Eigen"
 #include <fstream>
@@ -29,11 +31,71 @@
 #ifndef VIENNACL_WITH_UBLAS
 #define VIENNACL_WITH_UBLAS
 #endif
-#include "IAlgorithm.h"
+
+#include "Solver.h"
+#include "SimpleGPUSolver.h"
+#include "SimpleCPUSolver.h"
+#include "SequentialGPUSolver.h"
+#include "SequentialCPUSolver.h"
+//#include "SharedTypes.h"
+#include "matrix_factory.h"
+#include "vector_factory.h"
+#include "Algorithm.h"
+//#include "converters.h"
+using namespace ses;
+
+
+#include <memory>
+
+
+std::unique_ptr<ISolver> solver;
+
+CXDLL_API ScalarType * ses_solve_pressure_gpu(int num_rows, int num_cols, int nnz, int* row_indices, int* col_indices, ScalarType * values, ScalarType * rhs) {
+	VI_SELL_MAT mat; VI_VEC vec; VI_VEC result;
+	create_matrix(num_rows, num_cols, nnz, row_indices, col_indices, values, mat);
+	create_vector(num_rows, rhs, vec);
+	solver = std::make_unique<SimpleGPUSolver<VI_SELL_MAT, VI_VEC>>(mat, vec, GMRES);
+	solver->Solve(1000, 0.1);
+	return solver->GetResult();
+}
+
+
+CXDLL_API ScalarType* ses_solve_begin_density_gpu(int num_rows, int num_cols, int nnz, int* row_indices, int* col_indices, ScalarType* values, ScalarType* rhs)
+{
+	VI_SELL_MAT mat; VI_VEC vec; 
+	create_matrix(num_rows, num_cols, nnz, row_indices, col_indices, values, mat);
+	create_vector(num_rows, rhs, vec);
+	solver = std::make_unique<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>>(mat, vec, GMRES);
+	solver->Solve(1000, 0.1);
+	return solver->GetResult();
+}
+
+CXDLL_API ScalarType* ses_solve_next(ScalarType* rhs) {
+	SequentialGPUSolver<VI_SELL_MAT, VI_VEC>* gpu_seq_solver =
+		dynamic_cast<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
+	//SequentialCPUSolver<VI_SELL_MAT, VI_VEC>* cpu_seq_solver =
+	//	dynamic_cast<SequentialCPUSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
+
+	assert((gpu_seq_solver /* || cpu_seq_solver*/), "It is not a Sequential Solver");
+
+	if (gpu_seq_solver) {
+		VI_VEC vec;
+		create_vector(solver->num_rows, rhs, vec);
+		gpu_seq_solver->Solve(vec, 1000, 0.1);
+	}
+	//else if (cpu_seq_solver) {
+	//	cpu_seq_solver->Solve(vec, 1000, 0.1);
+	// }
+
+	return solver->GetResult();
+}
+
+
+
+#include "Algorithm.h"
 #include "IPreconditioner.h"
 
 
-#include "CgAlgorithm.h"
 #include <iostream>
 //#include "petscksp.h"
 //#include "petscviennacl.h"
@@ -75,13 +137,13 @@
 #include "viennacl/linalg/power_iter.hpp"
 
 #include <time.h>
-
-CXDLL_API double* ses_symmetric_cpu_cg(int numRows, int numNonzero, int* rowIndices,
-	int* colIndices, double* values, double* rhs, double* result) {
-	ses::IAlgorithm algorithm = ses::CgAlgorithm();
-
-	return 0;
-}
+//
+//CXDLL_API double* ses_symmetric_cpu_cg(int numRows, int numNonzero, int* rowIndices,
+//	int* colIndices, double* values, double* rhs, double* result) {
+//	ses::IAlgorithm algorithm = ses::CgAlgorithm();
+//
+//	return 0;
+//}
 
 
 
@@ -436,7 +498,6 @@ CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* c
 	viennacl::ocl::device current_device = viennacl::ocl::current_device();
 	cout << "current device 1:" << current_device.name() << endl;
 
-	typedef float       ScalarType;
 	std::cout << "size of float: " << sizeof(float) << std::endl;
 	std::cout << "size of float: " << sizeof(double) << std::endl;
 	unsigned int num_rows = numRows, num_cols = numRows, num_nonzeros = numNonzero;
@@ -480,7 +541,7 @@ CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* c
 
 	std::size_t vcl_size = b.size();
 	viennacl::sliced_ell_matrix<ScalarType> vcl_matrix;
-	//viennacl::coordinate_matrix<ScalarType> vcl_coordinate_matrix;
+	viennacl::coordinate_matrix<ScalarType> vcl_coordinate_matrix;
 	viennacl::vector<ScalarType> vcl_rhs(vcl_size);
 	viennacl::vector<ScalarType> vcl_result(vcl_size);
 	viennacl::vector<ScalarType> vcl_rhs_result(vcl_size);
@@ -550,7 +611,7 @@ CXDLL_API void solve_matrix(int numRows, int numNonzero, int* rowIndices, int* c
 	clock_t endt = clock();
 	printf("Time taken: %.2fs\n", (double)(endt - startt) / CLOCKS_PER_SEC);
 
-	save_vector(vcl_result, "gmres_x.txt");
-	save_vector(vcl_rhs_result, "gmres_b.txt");
+	save_vector<ScalarType>(vcl_result, "gmres_x.txt");
+	save_vector<ScalarType>(vcl_rhs_result, "gmres_b.txt");
 
 }
