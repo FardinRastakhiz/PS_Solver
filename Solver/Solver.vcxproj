@@ -161,10 +161,8 @@
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="IPreconditioner.h" />
     <ClInclude Include="matrix_factory.h" />
-    <ClInclude Include="Parameters.h" />
     <ClInclude Include="SequentialCPUSolver.h" />
     <ClInclude Include="SequentialGPUSolver.h" />
-    <ClInclude Include="shared_types.h" />
     <ClInclude Include="SimpleCPUSolver.h" />
     <ClInclude Include="SimpleGPUSolver.h" />
     <ClInclude Include="Solver.h" />
@@ -179,7 +177,6 @@
   <ItemGroup>
     <ClCompile Include="algorithm_factories.cpp" />
     <ClCompile Include="matrix_factory.cpp" />
-    <ClCompile Include="Parameters.cpp" />
     <ClCompile Include="preconditioner_factories.cpp" />
     <ClCompile Include="SequentialGPUSolver.cpp" />
     <ClCompile Include="SimpleGPUSolver.cpp" />
