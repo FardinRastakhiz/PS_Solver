@@ -141,8 +141,6 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Microsoft SDKs\MPI\Include;C:\petsc8\arch-mswin-c-opt\include;D:\libs\ViennaCL;D:\libs\OpenCL\include;D:\libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,31 +153,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClInclude Include="converters.h" />
     <ClInclude Include="CPUSolver.h" />
+    <ClInclude Include="custom_monitor.h" />
     <ClInclude Include="GPUSolver.h" />
     <ClInclude Include="Algorithm.h" />
+=======
+    <ClInclude Include="algorithm_factories.h" />
+    <ClInclude Include="CgAlgorithm.h" />
+    <ClInclude Include="custom_monitor.h" />
+    <ClInclude Include="IAlgorithm.h" />
+>>>>>>> 69214f69712c9da37e3148ffed88630095002aa3
     <ClInclude Include="IPreconditioner.h" />
     <ClInclude Include="matrix_factory.h" />
     <ClInclude Include="SequentialCPUSolver.h" />
     <ClInclude Include="SequentialGPUSolver.h" />
+    <ClInclude Include="SharedTypes.h" />
     <ClInclude Include="SimpleCPUSolver.h" />
     <ClInclude Include="SimpleGPUSolver.h" />
     <ClInclude Include="Solver.h" />
     <ClInclude Include="sparse_equation_solver.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="utilities.h">
-      <FileType>CppHeader</FileType>
-    </ClInclude>
+    <ClInclude Include="utilities.h" />
+<<<<<<< HEAD
     <ClInclude Include="vector_factory.h" />
+=======
+    <ClInclude Include="Vector.h" />
+>>>>>>> 69214f69712c9da37e3148ffed88630095002aa3
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="algorithm_factories.cpp" />
-    <ClCompile Include="matrix_factory.cpp" />
     <ClCompile Include="preconditioner_factories.cpp" />
-    <ClCompile Include="SequentialGPUSolver.cpp" />
-    <ClCompile Include="SimpleGPUSolver.cpp" />
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="sparse_equation_solver.cpp" />
     <ClCompile Include="pch.cpp">
@@ -188,10 +194,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="utilities.cpp">
-      <DeploymentContent>true</DeploymentContent>
-    </ClCompile>
-    <ClCompile Include="vector_factory.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

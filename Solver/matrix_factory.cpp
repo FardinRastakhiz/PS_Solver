@@ -1,0 +1,68 @@
+#include "pch.h"
+#include "matrix_factory.h"
+
+//
+// ublas includes
+//
+#include <boost/numeric/ublas/io.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/matrix_proxy.hpp>
+#include <boost/numeric/ublas/operation.hpp>
+#include <boost/numeric/ublas/triangular.hpp>
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/vector_proxy.hpp>
+#include <boost/numeric/ublas/matrix_sparse.hpp>
+#include <boost/numeric/ublas/operation_sparse.hpp>
+#include <boost/numeric/ublas/lu.hpp>
+#include <numeric>
+
+// IMPORTANT: Must be set prior to any ViennaCL includes if you want to use ViennaCL algorithms on Eigen objects
+#define VIENNACL_WITH_UBLAS 1
+
+using namespace boost::numeric;
+
+namespace ses {
+
+	typedef ublas::mapped_matrix<LocalType> CPUMatType;
+
+
+	ublas::mapped_matrix<LocalType> create_ublas_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values) {
+
+		ublas::mapped_matrix<LocalType> matrix(num_rows, num_cols, nnz);
+		for (int i = 0; i < nnz; i++) {
+			if (i % 1000000 == 0)
+				std::cout << i << std::endl;
+			matrix(rows[i] - 1, cols[i] - 1) = values[i];
+			if (rows[i] != cols[i])
+			{
+				matrix(cols[i] - 1, rows[i] - 1) = values[i];
+			}
+			else
+			{
+				matrix(cols[i] - 1, rows[i] - 1) += values[i];
+			}
+		}
+		return matrix;
+	}
+
+
+	// The main function to create CPU Matrix
+	CPUMatType create_cpu_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values) {
+		return create_ublas_matrix(num_rows, num_cols, nnz, rows, cols, values);
+	}
+
+	void create_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values, VI_SELL_MAT& matrix) {
+		viennacl::copy(create_cpu_matrix(num_rows, num_cols, nnz, rows, cols, values), matrix);
+	}
+
+	void create_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values, VI_COMP_Mat& matrix) {
+		
+		viennacl::copy(create_cpu_matrix(num_rows, num_cols, nnz, rows, cols, values), matrix);
+	}
+
+
+	void create_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values, VI_COO_Mat& matrix) {
+		
+		viennacl::copy(create_cpu_matrix(num_rows, num_cols, nnz, rows, cols, values), matrix);
+	}
+}

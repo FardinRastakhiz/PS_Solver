@@ -61,15 +61,26 @@ end Module solveMatrix
     integer :: idx, errCode
     integer :: num_threads
     integer(c_int) :: status
-    type(c_ptr) :: dll_handle
+
+
+    type(c_ptr) :: dll_handlesasdfa
     interface
-        function solve_matrix(numRows, numNonzero, rowIndices, colIndices, values, b, x) bind(C, name="solve_matrix")
+    
+        !function solve_matrix23(numRows, num_cols, numNonzero, rowIndices, colIndices, values, b, x) bind(C, name="solve_matrix2")
+        !    use iso_c_binding
+        !    integer(c_int), value :: numRows, num_cols, numNonzero
+        !    integer(c_int), dimension(*) :: rowIndices, colIndices
+        !    real(c_double), dimension(*) :: values, b, x
+        !    integer(c_int) :: solve_matrix23
+        !end function solve_matrix23
+        
+        function ses_solve_pressure_gpu(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, x) bind(C, name="ses_solve_pressure_gpu")
             use iso_c_binding
-            integer(c_int), value :: numRows, numNonzero
-            integer(c_int), dimension(*) :: rowIndices, colIndices
+            integer(c_int), value :: num_rows, num_cols, num_non_zero
+            integer(c_int), dimension(*) :: row_indices, col_indices
             real(c_double), dimension(*) :: values, b, x
-            integer(c_int) :: solve_matrix
-        end function solve_matrix
+            integer(c_int) :: ses_solve_pressure_gpu
+        end function ses_solve_pressure_gpu
     end interface
     ! Allocate rowIndex, colIndex, Avalues, b, x, ia, and ja arrays
     allocate(rowIndex(nnz), colIndex(nnz), Avalues(nnz), b(n), x(n), ia(n+1), ja(nnz))
@@ -78,7 +89,8 @@ end Module solveMatrix
     call readSparseMatrix(matrixFile, nnz, rowIndex, colIndex, Avalues)
     call readVector(bFile, n, b)
 
-    x = solve_matrix(n, nnz, rowIndex, colIndex, Avalues, b, x)
+    !x = solve_matrix23(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
+    x = ses_solve_pressure_gpu(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
     ! Wait for user input before exiting
     write(*,*) "Press Enter to exit"
     read(*,*)
