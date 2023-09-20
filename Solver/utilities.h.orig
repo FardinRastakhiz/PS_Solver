@@ -1,5 +1,9 @@
 #pragma once
 
+<<<<<<< HEAD
+=======
+typedef float       ScalarType;
+>>>>>>> 69214f6 (Add viennaCL to project)
 
 
 #include "viennacl/scalar.hpp"
@@ -9,11 +13,16 @@
 //#include <iostream>
 //#include <fstream>
 
+<<<<<<< HEAD
 
 // Saving Vector!!
 template<typename T>
 void save_vector(viennacl::vector<T> x, const char* file_name) {
     size_t size = x.size();
+=======
+void save_vector(viennacl::vector<ScalarType> x, const char* file_name) {
+    int size = x.size();
+>>>>>>> 69214f6 (Add viennaCL to project)
     FILE* fp;
     fp = fopen(file_name, "w");
     for (unsigned i = 0; i < size; i++) {
@@ -21,6 +30,7 @@ void save_vector(viennacl::vector<T> x, const char* file_name) {
         fprintf(fp, "%d, %f\n", i, output);
     }
     fclose(fp);
+<<<<<<< HEAD
 }
 
 
@@ -28,4 +38,6 @@ void save_vector(viennacl::vector<T> x, const char* file_name) {
 template < class T, class U >
 bool is_inst_of(U u) {
     return dynamic_cast<T>(u) != nullptr;
+=======
+>>>>>>> 69214f6 (Add viennaCL to project)
 }
