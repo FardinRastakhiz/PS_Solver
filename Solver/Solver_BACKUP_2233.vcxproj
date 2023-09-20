@@ -164,7 +164,7 @@
     <ClInclude Include="CgAlgorithm.h" />
     <ClInclude Include="custom_monitor.h" />
     <ClInclude Include="IAlgorithm.h" />
->>>>>>> 69214f6 (Add viennaCL to project)
+>>>>>>> 69214f69712c9da37e3148ffed88630095002aa3
     <ClInclude Include="IPreconditioner.h" />
     <ClInclude Include="matrix_factory.h" />
     <ClInclude Include="SequentialCPUSolver.h" />
@@ -181,7 +181,7 @@
     <ClInclude Include="vector_factory.h" />
 =======
     <ClInclude Include="Vector.h" />
->>>>>>> 69214f6 (Add viennaCL to project)
+>>>>>>> 69214f69712c9da37e3148ffed88630095002aa3
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="algorithm_factories.cpp" />
