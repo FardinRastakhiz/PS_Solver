@@ -81,9 +81,6 @@
     <ClInclude Include="Algorithm.h">
       <Filter>Header Files\ses\helpers</Filter>
     </ClInclude>
-    <ClInclude Include="shared_types.h">
-      <Filter>Header Files\ses\helpers</Filter>
-    </ClInclude>
     <ClInclude Include="matrix_factory.h">
       <Filter>Header Files\ses\Factories</Filter>
     </ClInclude>
@@ -98,9 +95,6 @@
     </ClInclude>
     <ClInclude Include="utilities.h">
       <Filter>Header Files\ses\helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Parameters.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -130,9 +124,6 @@
     </ClCompile>
     <ClCompile Include="SimpleGPUSolver.cpp">
       <Filter>Source Files\ses\Solvers</Filter>
-    </ClCompile>
-    <ClCompile Include="Parameters.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Solver.cpp">
       <Filter>Source Files\ses\Solvers</Filter>
