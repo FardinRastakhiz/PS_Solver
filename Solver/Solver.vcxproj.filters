@@ -40,6 +40,9 @@
     <Filter Include="Source Files\ses\helpers">
       <UniqueIdentifier>{a9ad240c-7917-43a0-94ef-98d8258609e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ses\Solvers">
+      <UniqueIdentifier>{fbdfc1ad-2696-4c63-975d-90df73edd791}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -53,9 +56,6 @@
     </ClInclude>
     <ClInclude Include="IPreconditioner.h">
       <Filter>Header Files\ses\preconditioners</Filter>
-    </ClInclude>
-    <ClInclude Include="custom_monitor.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SequentialCPUSolver.h">
       <Filter>Header Files\ses\Solvers</Filter>
@@ -81,10 +81,7 @@
     <ClInclude Include="Algorithm.h">
       <Filter>Header Files\ses\helpers</Filter>
     </ClInclude>
-    <ClInclude Include="utilities.h">
-      <Filter>Header Files\ses\helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="SharedTypes.h">
+    <ClInclude Include="shared_types.h">
       <Filter>Header Files\ses\helpers</Filter>
     </ClInclude>
     <ClInclude Include="matrix_factory.h">
@@ -96,10 +93,13 @@
     <ClInclude Include="converters.h">
       <Filter>Header Files\ses\Factories</Filter>
     </ClInclude>
-    <ClInclude Include="custom_monitor.h">
+    <ClInclude Include="utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utilities.h">
+      <Filter>Header Files\ses\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Parameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -110,14 +110,32 @@
     <ClCompile Include="sparse_equation_solver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Solver.cpp">
-      <Filter>Source Files\ses</Filter>
-    </ClCompile>
     <ClCompile Include="algorithm_factories.cpp">
       <Filter>Source Files\ses\Factories</Filter>
     </ClCompile>
     <ClCompile Include="preconditioner_factories.cpp">
       <Filter>Source Files\ses\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="utilities.cpp">
+      <Filter>Source Files\ses\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="vector_factory.cpp">
+      <Filter>Source Files\ses\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix_factory.cpp">
+      <Filter>Source Files\ses\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="SequentialGPUSolver.cpp">
+      <Filter>Source Files\ses\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleGPUSolver.cpp">
+      <Filter>Source Files\ses\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="Parameters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Solver.cpp">
+      <Filter>Source Files\ses\Solvers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
