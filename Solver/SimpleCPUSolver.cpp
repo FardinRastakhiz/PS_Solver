@@ -31,12 +31,12 @@ namespace ses {
 	void SimpleCPUSolver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
 		PetscErrorCode ierr;
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
-		//create_petsc_matrix(args.num_rows, args.num_cols, args.nnz, args.row_indices, args.col_indices, this->s_values, this->A);
-		//create_petsc_vector(args.num_rows, this->b);
-		//create_petsc_vector(args.num_rows, this->y);
-		//create_petsc_vector(args.num_rows, this->u);
-		//create_petsc_vector(args.num_rows, this->x);
-		//fill_petsc_vector(args.num_rows, this->s_b, this->b);
+		create_matrix(args.num_rows, args.num_cols, args.nnz, args.row_indices, args.col_indices, this->s_values, this->A);
+		create_petsc_vector(args.num_rows, this->b);
+		create_petsc_vector(args.num_rows, this->y);
+		create_petsc_vector(args.num_rows, this->u);
+		create_petsc_vector(args.num_rows, this->x);
+		fill_petsc_vector(args.num_rows, this->s_b, this->b);
 	}
 	template<class mat_T, class vec_T>
 	void SimpleCPUSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
@@ -95,7 +95,7 @@ namespace ses {
 
 	template<class mat_T, class vec_T>
 	LocalType* SimpleCPUSolver<mat_T, vec_T>::GetResult() {
-		//TODO : implement this function
+		//TODO : implement this function later
 		double x = 1.1;
 
 		return &x;

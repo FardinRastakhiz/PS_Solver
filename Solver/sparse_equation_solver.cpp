@@ -69,8 +69,9 @@ CXDLL_API void ses_solve_pressure_cpu(int num_rows, int num_cols, int nnz, int* 
 	// save x and b
 	if (SimpleCPUSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimpleCPUSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
 	{
-		c->PrintX();
-		c->PrintResultB();
+		//c->PrintX();
+		//c->PrintResultB();
+		c->Finalize();
 	}
 	
 }
