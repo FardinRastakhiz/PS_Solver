@@ -22,6 +22,7 @@
 #include "Solver.h"
 #include "GPUSolver.h"
 #include "SimpleGPUSolver.h"
+#include "SimpleCPUSolver.h"
 #include "utilities.h"
 
 //#include "SimpleCPUSolver.h"
@@ -56,6 +57,23 @@ CXDLL_API void ses_solve_pressure_gpu(int num_rows, int num_cols, int nnz, int* 
 	save_vector_pointer(x, num_cols, "output_x.txt");
 }
 
+
+CXDLL_API void ses_solve_pressure_cpu(int num_rows, int num_cols, int nnz, int* row_indices, int* col_indices, double* values, double* b, double* x) {
+
+	SolverArgs args(num_rows, num_cols, nnz, row_indices, col_indices, values, b, GMRES);
+
+	// create solvers and solve the matrix
+	solver = std::make_unique<SimpleCPUSolver<PETSC_MAT,PETSC_VEC >>(args);
+	solver->Solve(1000, 0.1);
+
+	// save x and b
+	if (SimpleCPUSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimpleCPUSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
+	{
+		c->PrintX();
+		c->PrintResultB();
+	}
+	
+}
 //
 //CXDLL_API void ses_solve_begin_density_gpu(int num_rows, int num_cols, int nnz, int* row_indices, int* col_indices, double* values, double* b, double* x)
 //{
