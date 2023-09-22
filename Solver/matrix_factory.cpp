@@ -67,7 +67,7 @@ namespace ses {
 		viennacl::copy(create_cpu_matrix(num_rows, num_cols, nnz, rows, cols, values), matrix);
 	}
 
-	void create_petsc_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values, PETSC_MAT& matrix) {
+	void create_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values, PETSC_MAT& matrix) {
 		// Create a parallel matrix
 		MatCreate(PETSC_COMM_WORLD, &matrix);
 		MatSetSizes(matrix, PETSC_DECIDE, PETSC_DECIDE, num_rows, num_cols);
