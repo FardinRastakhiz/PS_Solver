@@ -43,4 +43,5 @@ namespace ses {
 	template Solver<VI_COMP_Mat, VI_VEC>;
 	template Solver<VI_COO_Mat, VI_VEC>;
 	template Solver<VI_SELL_MAT, VI_VEC>;
+	template Solver<PETSC_MAT, PETSC_VEC>;
 }
