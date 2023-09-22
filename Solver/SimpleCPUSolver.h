@@ -10,19 +10,14 @@ namespace ses {
 	class SimpleCPUSolver : public CPUSolver<mat_T, vec_T>
 	{
 	public:
-		SimpleCPUSolver(SolverArgs args) :
-			CPUSolver<mat_T, vec_T>(args) {}
-
-
-		/*SimpleCPUSolver(mat_T A, vec_T b, Algorithm algorithm, IPreconditioner preconditioner = DummyPreconditioner())
-			: CPUSolver<mat_T, vec_T>(A, b, algorithm, preconditioner)
-		{
-		}*/
-
-		vec_T Solve(int iteration_count = 100, LocalType precision = 1e-4) override {
-			this->x = CPUSolver<mat_T, vec_T>.Solve(this->A, this->b, this->algorithm, this->preconditioner);
-			return this->x;
-		}
-
+		SimpleCPUSolver(SolverArgs args);
+		void Solve(int iteration_count = 100, LocalType precision = 1e-4) override;
+		void SetLocalTypes(SolverArgs args) override;
+		void PrintX();
+		void PrintResultB();
+		void Finalize();
+		LocalType* GetResult() override;
+		vec_T u;
+		vec_T y;
 	};
 }
