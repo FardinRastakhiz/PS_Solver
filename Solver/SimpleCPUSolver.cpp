@@ -44,7 +44,9 @@ namespace ses {
 	void SimpleCPUSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
 		PetscErrorCode ierr;
 		PetscMPIInt    size, rank;
+		if(iteration_count != -1)
 		PetscOptionsSetValue(NULL, "-ksp_max_it", std::to_string(iteration_count).c_str());
+		if(precision != -1.0)
 		PetscOptionsSetValue(NULL, "-ksp_atol", std::to_string(precision).c_str());
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
 		PetscPrintf(PETSC_COMM_WORLD, "PETSC Initialized \n");
