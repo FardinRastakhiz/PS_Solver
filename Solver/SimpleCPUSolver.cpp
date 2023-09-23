@@ -33,9 +33,9 @@ namespace ses {
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
 		create_matrix(args.num_rows, args.num_cols, args.nnz, args.row_indices, args.col_indices, this->s_values, this->A);
 		create_petsc_vector(args.num_rows, this->b);
-		create_petsc_vector(args.num_rows, this->y);
-		create_petsc_vector(args.num_rows, this->u);
-		create_petsc_vector(args.num_rows, this->x);
+		//create_petsc_vector(args.num_rows, this->y);
+		//create_petsc_vector(args.num_rows, this->u);
+		//create_petsc_vector(args.num_rows, this->x);
 		fill_petsc_vector(args.num_rows, this->s_b, this->b);
 	}
 	template<class mat_T, class vec_T>
@@ -43,6 +43,7 @@ namespace ses {
 		PetscErrorCode ierr;
 		PetscMPIInt    size, rank;
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
+		PetscPrintf(PETSC_COMM_WORLD, "PETSC Initialized \n");
 		//PetscLogDefaultBegin();
 		PetscOptionsSetValue(NULL, "-omp_num_threads", "8");
 		PetscOptionsSetValue(NULL, "-omp_view", NULL);

@@ -82,7 +82,7 @@ end Module solveMatrix
         !    integer(c_int) :: ses_solve_pressure_gpu
         !end function ses_solve_pressure_gpu
         
-        function ses_solve_pressure_cpu(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, x) bind(C, name="ses_solve_pressure_gpu")
+        function ses_solve_pressure_cpu(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, x) bind(C, name="ses_solve_pressure_cpu")
             use iso_c_binding
             integer(c_int), value :: num_rows, num_cols, num_non_zero
             integer(c_int), dimension(*) :: row_indices, col_indices
@@ -98,7 +98,8 @@ end Module solveMatrix
     call readVector(bFile, n, b)
 
     !x = solve_matrix23(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
-    x = ses_solve_pressure_gpu(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
+    !x = ses_solve_pressure_gpu(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
+    x = ses_solve_pressure_cpu(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
     ! Wait for user input before exiting
     write(*,*) "Press Enter to exit"
     read(*,*)
