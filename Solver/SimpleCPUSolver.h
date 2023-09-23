@@ -19,5 +19,7 @@ namespace ses {
 		LocalType* GetResult() override;
 		vec_T u;
 		vec_T y;
+	private:
+		KSPType GetKSPType(Algorithm alg);
 	};
 }
