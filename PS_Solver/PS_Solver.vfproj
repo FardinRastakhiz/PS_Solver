@@ -35,7 +35,7 @@
 				<Tool Name="VFPostBuildEventTool"/>
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Release|x64">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" AdditionalIncludeDirectories="C:\Users\Raoof101\Dropbox\PoreFlow\Fortran_examples\PS_Solver_omid\PS_Solver\PS_Solver\src_slatec\" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" AdditionalIncludeDirectories="C:\Users\Raoof101\Dropbox\PoreFlow\Fortran_examples\PS_Solver_omid\PS_Solver\PS_Solver\src_slatec\" OpenMP="OpenMPParallelCode" RuntimeLibrary="rtMultiThreadedDLL"/>
 				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="$(SolutionDir)PS_Solver\src_slatec;$(SolutionDir)PS_Solver\$(Platform)\$(Configuration)" SubSystem="subSystemConsole" AdditionalDependencies="Solver.lib"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>

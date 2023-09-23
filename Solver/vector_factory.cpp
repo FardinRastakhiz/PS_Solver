@@ -22,13 +22,13 @@ namespace ses {
 		}
 		viennacl::copy(cpu_vec.begin(), cpu_vec.end(), out_vec.begin());
 	}
-	void fill_petsc_vector(int size, LocalType* values, PETSC_VEC out_vec) {
+	void fill_petsc_vector(int size, LocalType* values, PETSC_VEC& out_vec) {
 		// Set rhs values
-		for (int i = 0; i < size; i++) { VecSetValue(out_vec, i, values[i], INSERT_VALUES); }
-		VecAssemblyBegin(out_vec);
-		VecAssemblyEnd(out_vec);
+		//for (int i = 0; i < size; i++) { VecSetValue(out_vec, i, values[i], INSERT_VALUES); }
+		//VecAssemblyBegin(out_vec);
+		//VecAssemblyEnd(out_vec);
 	}
-	void create_petsc_vector(int size, PETSC_VEC out_vec) {
+	void create_petsc_vector(int size, PETSC_VEC& out_vec) {
 		// Create vectors
 		VecCreate(PETSC_COMM_WORLD, &out_vec);
 		VecSetSizes(out_vec, PETSC_DECIDE, size);
