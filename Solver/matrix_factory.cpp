@@ -30,18 +30,22 @@ namespace ses {
 	ublas::mapped_matrix<LocalType> create_ublas_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values) {
 
 		ublas::mapped_matrix<LocalType> matrix(num_rows, num_cols, nnz);
+		//int min_row = 100000;
+
 		for (int i = 0; i < nnz; i++) {
 			if (i % 1000000 == 0)
 				std::cout << i << std::endl;
 			matrix(rows[i] - 1, cols[i] - 1) = values[i];
+			/*if (rows[i] < min_row)
+				min_row = rows[i];
 			if (rows[i] != cols[i])
 			{
 				matrix(cols[i] - 1, rows[i] - 1) = values[i];
-			}
-			else
-			{
-				matrix(cols[i] - 1, rows[i] - 1) += values[i];
-			}
+			}*/
+			//else
+			//{
+			//	matrix(cols[i] - 1, rows[i] - 1) += values[i];
+			//}
 		}
 		return matrix;
 	}
@@ -53,7 +57,9 @@ namespace ses {
 	}
 
 	void create_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values, VI_SELL_MAT& matrix) {
-		viennacl::copy(create_cpu_matrix(num_rows, num_cols, nnz, rows, cols, values), matrix);
+		CPUMatType ublas_mat = create_cpu_matrix(num_rows, num_cols, nnz, rows, cols, values);
+		std::cout <<"ublas_mat1: " << ublas_mat(0, 0) << std::endl;
+		viennacl::copy(ublas_mat, matrix);
 	}
 
 	void create_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values, VI_COMP_Mat& matrix) {

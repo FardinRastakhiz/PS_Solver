@@ -24,6 +24,7 @@ namespace ses {
 		ISolver();
 		virtual void Solve(int iteration_count = 100, LocalType precision = 1e-4);
 		virtual LocalType* GetResult();
+		virtual LocalType* CalculateB();
 		virtual void SetPlatform();
 		virtual void SetLocalTypes(SolverArgs args);
 	};

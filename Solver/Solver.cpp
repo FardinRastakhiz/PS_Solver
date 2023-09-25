@@ -24,6 +24,8 @@ namespace ses {
 	ISolver::ISolver() {}
 	void ISolver::Solve(int iteration_count, LocalType precision) { throw std::exception("Not Implemented Exception"); }
 	LocalType* ISolver::GetResult() { throw std::exception("Not Implemented Exception"); }
+
+	LocalType* ISolver::CalculateB() { throw std::exception("Not Implemented Exception"); }
 	void ISolver::SetPlatform() { }
 	void ISolver::SetLocalTypes(SolverArgs args) { }
 
@@ -36,6 +38,11 @@ namespace ses {
 		s_values = cast_to_local(args.values, args.nnz);
 		s_b = cast_to_local(args.b, args.num_rows);
 		s_x = cast_to_local(args.x, args.num_cols);
+
+		std::cout << s_values[0] << std::endl;
+		std::cout << s_b[1] << std::endl;
+		//std::cout << s_values[0] << std::endl;
+		//std::cout << s_b[10099] << std::endl;
 	}
 
 

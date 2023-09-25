@@ -13,5 +13,7 @@ namespace ses
 	public:
 		GPUSolver(SolverArgs args) :
 			Solver<mat_T, vec_T>(args) {	}
+
+
 	};
 }
