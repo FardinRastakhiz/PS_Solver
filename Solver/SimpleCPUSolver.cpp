@@ -73,15 +73,16 @@ namespace ses {
 		ierr = VecNorm(this->y, NORM_2, &norm); // Calculate the 2-norm of y
 		PetscPrintf(PETSC_COMM_WORLD, "norm of error %g\n", norm);
 		KSPDestroy(&ksp);
+		double* newX = (double*)this->x;
+		std::cout << newX[1000000];
 
 	}
 
 	template<class mat_T, class vec_T>
 	LocalType* SimpleCPUSolver<mat_T, vec_T>::GetResult() {
-		//TODO : implement this function later
-		double x = 1.1;
-
-		return &x;
+		PetscScalar* a;
+		VecGetArray(this->x, &a);
+		return (LocalType*)a;
 	}
 
 	template<class mat_T, class vec_T>

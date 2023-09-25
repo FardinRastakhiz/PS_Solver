@@ -65,7 +65,10 @@ CXDLL_API void ses_solve_pressure_cpu(int num_rows, int num_cols, int nnz, int* 
 	// create solvers and solve the matrix
 	solver = std::make_unique<SimpleCPUSolver<PETSC_MAT,PETSC_VEC >>(args);
 	solver->Solve(1000, -1.0);
+	// Get the result
+	x = ses::cast_to<double>(solver->GetResult(), num_cols);
 
+	save_vector_pointer(x, num_cols, "output_x.txt");
 	// save x and b
 	if (SimpleCPUSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimpleCPUSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
 	{
