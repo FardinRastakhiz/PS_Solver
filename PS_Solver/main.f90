@@ -7,6 +7,10 @@
     
     !!!note: in the project folder i have put two matrices for examples. a larger size (with name append of _L) and a medium size (with name append of _M). 
     
+    !small size
+    !character(len=30) :: matrixFile = "conc_matrix_1.txt", bFile = "cons_rhs_1.txt"
+    !integer, parameter :: n = 1656 , nnz = 7471     ! medium size (with name append of _M)
+    
     !medium size
     !character(len=30) :: matrixFile = "Matrix_M", bFile = "Pknown_M"
     !integer, parameter :: n = 11720, nnz = 27839     ! medium size (with name append of _M)

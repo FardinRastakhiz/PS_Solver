@@ -11,6 +11,7 @@ namespace ses {
 		void SetLocalTypes(SolverArgs args) override;
 		void Solve(int iteration_count = 100, LocalType precision = 1e-4) override;
 		LocalType* GetResult() override;
+		LocalType* CalculateB() override;
 		void PrintActiveDevice();
 	};
 }

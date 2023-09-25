@@ -23,7 +23,7 @@ namespace ses {
 		FILE* fp;
 		fp = fopen(file_name, "w");
 		for (unsigned i = 0; i < size; i++) {
-			float output = x[i];
+			float output = (float)x[i];
 			fprintf(fp, "%d, %f\n", i, output);
 		}
 		fclose(fp);

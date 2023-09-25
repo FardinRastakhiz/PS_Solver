@@ -51,12 +51,16 @@ CXDLL_API void ses_solve_pressure_gpu(int num_rows, int num_cols, int nnz, int* 
 
 	// create solvers and solve the matrix
 	solver = std::make_unique<SimpleGPUSolver<VI_SELL_MAT, VI_VEC>>(args);
-	solver->Solve(1000, 0.1);
+	solver->Solve(10000, 1.0e-10);
 
 	// Get the result
 	x = ses::cast_to<double>(solver->GetResult(), num_cols);
 
+	auto new_b = ses::cast_to<double>(solver->CalculateB(), num_rows);
+	//std::cout << x1[0] << std::endl;
+	//std::cout << x1[1] << std::endl;
 	save_vector_pointer(x, num_cols, "output_x.txt");
+	save_vector_pointer(new_b, num_rows, "output_b.txt");
 }
 
 

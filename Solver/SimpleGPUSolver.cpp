@@ -114,10 +114,15 @@ namespace ses {
 	void SimpleGPUSolver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
 		std::cout << "SimpleGPUSolver.cpp - SetLocalTypes(SolverArgs args)" << std::endl;
 		// create target library vectors and matrices
-		GPUSolver<mat_T, vec_T>::SetLocalTypes(args);
-		VI_SELL_MAT mat; VI_VEC vec;
+		Solver<mat_T, vec_T>::SetLocalTypes(args);
+		/*VI_SELL_MAT mat; VI_VEC vec;*/
 		create_matrix(args.num_rows, args.num_cols, args.nnz, args.row_indices, args.col_indices, this->s_values, this->A);
 		create_vector(args.num_rows, this->s_b, this->b);
+		/*
+		auto b_val = reinterpret_cast<VI_VEC>(this->b)(0);
+		auto a_val = reinterpret_cast<VI_SELL_MAT>(this->A)(0, 0);
+		std::cout << b_val << std::endl;
+		std::cout << a_val << std::endl;*/
 	}
 
 	template<class mat_T, class vec_T>
@@ -128,13 +133,23 @@ namespace ses {
 		this->x = viennacl::zero_vector<LocalType>(this->b.size(), viennacl::traits::context(this->b));
 		this->x = _my_solver(this->A, this->b);
 	}
-
+	std::vector<LocalType> vec_result;
 	template<class mat_T, class vec_T>
 	LocalType* SimpleGPUSolver<mat_T, vec_T>::GetResult() {
-		std::vector<LocalType> vec(this->x.size());
-		viennacl::copy(this->x.begin(), this->x.end(), vec.begin());
-		LocalType* vec2 = &vec[0];
-		return vec2;
+		vec_result = std::vector<LocalType>(this->x.size());
+		viennacl::copy(this->x.begin(), this->x.end(), vec_result.begin());
+		//LocalType* vec2 = &vec[0];
+		return &vec_result[0];
+	}
+
+	std::vector<LocalType> b_result;
+	template<class mat_T, class vec_T>
+	LocalType* SimpleGPUSolver<mat_T, vec_T>::CalculateB() {
+		VI_VEC new_b = viennacl::linalg::prod(this->A, this->x);
+		b_result = std::vector<LocalType>(new_b.size());
+		viennacl::copy(new_b.begin(), new_b.end(), b_result.begin());
+		//LocalType* vec2 = &vec[0];
+		return &b_result[0];
 	}
 
 	template<class mat_T, class vec_T>
