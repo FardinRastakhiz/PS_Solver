@@ -180,6 +180,7 @@
     <ClCompile Include="algorithm_factories.cpp" />
     <ClCompile Include="matrix_factory.cpp" />
     <ClCompile Include="preconditioner_factories.cpp" />
+    <ClCompile Include="SequentialCPUSolver.cpp" />
     <ClCompile Include="SequentialGPUSolver.cpp" />
     <ClCompile Include="SimpleCPUSolver.cpp" />
     <ClCompile Include="SimpleGPUSolver.cpp" />
