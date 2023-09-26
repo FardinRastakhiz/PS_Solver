@@ -73,8 +73,6 @@ namespace ses {
 		ierr = VecNorm(this->y, NORM_2, &norm); // Calculate the 2-norm of y
 		PetscPrintf(PETSC_COMM_WORLD, "norm of error %g\n", norm);
 		KSPDestroy(&ksp);
-		double* newX = (double*)this->x;
-		std::cout << newX[1000000];
 
 	}
 

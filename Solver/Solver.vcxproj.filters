@@ -131,5 +131,8 @@
     <ClCompile Include="SimpleCPUSolver.cpp">
       <Filter>Source Files\ses\Solvers</Filter>
     </ClCompile>
+    <ClCompile Include="SequentialCPUSolver.cpp">
+      <Filter>Source Files\ses\Solvers</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
