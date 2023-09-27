@@ -34,21 +34,21 @@ namespace ses {
 		VecSetSizes(out_vec, PETSC_DECIDE, size);
 		VecSetFromOptions(out_vec);
 	}
-	void create_petsc_vectors(int iterations ,int size, std::vector<PETSC_VEC> out_vecs) {
-		for (int i = 0; i < iterations; i++) {
-			VecCreate(PETSC_COMM_WORLD, &(out_vecs[i]));
-			VecSetSizes(out_vecs[i], PETSC_DECIDE, size);
-			VecSetFromOptions(out_vecs[i]);
-		}
-	}
-	void fill_petsc_vectors(int iterations, int size, LocalType** values, std::vector<PETSC_VEC> out_vecs) {
-		for (int i = 0; i < iterations; i++) {
-			for (int j = 0; j < size; j++) { VecSetValue(out_vecs[i], j, values[i][j], INSERT_VALUES); }
-			VecAssemblyBegin(out_vecs[i]);
-			VecAssemblyEnd(out_vecs[i]);
-		}
+	//void create_petsc_vectors(int iterations ,int size, std::vector<PETSC_VEC> out_vecs) {
+	//	for (int i = 0; i < iterations; i++) {
+	//		VecCreate(PETSC_COMM_WORLD, &(out_vecs[i]));
+	//		VecSetSizes(out_vecs[i], PETSC_DECIDE, size);
+	//		VecSetFromOptions(out_vecs[i]);
+	//	}
+	//}
+	//void fill_petsc_vectors(int iterations, int size, LocalType** values, std::vector<PETSC_VEC> out_vecs) {
+	//	for (int i = 0; i < iterations; i++) {
+	//		for (int j = 0; j < size; j++) { VecSetValue(out_vecs[i], j, values[i][j], INSERT_VALUES); }
+	//		VecAssemblyBegin(out_vecs[i]);
+	//		VecAssemblyEnd(out_vecs[i]);
+	//	}
 
-	}
+	//}
 
 	
 }
