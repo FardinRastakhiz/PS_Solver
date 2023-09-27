@@ -59,7 +59,9 @@ namespace ses {
 	void create_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values, VI_SELL_MAT& matrix) {
 		CPUMatType ublas_mat = create_cpu_matrix(num_rows, num_cols, nnz, rows, cols, values);
 		std::cout <<"ublas_mat1: " << ublas_mat(0, 0) << std::endl;
+		//matrix = VI_SELL_MAT(num_rows, num_cols, 64);
 		viennacl::copy(ublas_mat, matrix);
+		std::cout << "matrix row per block: " << matrix.rows_per_block() << std::endl;
 	}
 
 	void create_matrix(int num_rows, int num_cols, int nnz, int* rows, int* cols, LocalType* values, VI_COMP_Mat& matrix) {
