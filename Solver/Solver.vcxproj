@@ -144,7 +144,7 @@
       <OpenMPSupport>false</OpenMPSupport>
       <AdditionalIncludeDirectories>$(SolutionDir)libs\PETSc\include;$(SolutionDir)libs\MicrosoftSDK\Include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\Boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -168,6 +168,7 @@
     <ClInclude Include="SimpleCPUSolver.h" />
     <ClInclude Include="SimpleGPUSolver.h" />
     <ClInclude Include="Solver.h" />
+    <ClInclude Include="solver_factory.h" />
     <ClInclude Include="sparse_equation_solver.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -185,6 +186,7 @@
     <ClCompile Include="SimpleCPUSolver.cpp" />
     <ClCompile Include="SimpleGPUSolver.cpp" />
     <ClCompile Include="Solver.cpp" />
+    <ClCompile Include="solver_factory.cpp" />
     <ClCompile Include="sparse_equation_solver.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

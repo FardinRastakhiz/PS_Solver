@@ -23,6 +23,7 @@
 #include "GPUSolver.h"
 #include "SimpleGPUSolver.h"
 #include "SimpleCPUSolver.h"
+#include "SequentialGPUSolver.h"
 #include "SequentialCPUSolver.h"
 #include "utilities.h"
 #include "vector_factory.h"
@@ -109,32 +110,39 @@ extern "C" CXDLL_API void ses_solve_next(int size, double* b, double* x) {
 	
 }
 //
-//CXDLL_API void ses_solve_begin_density_gpu(int num_rows, int num_cols, int nnz, int* row_indices, int* col_indices, double* values, double* b, double* x)
-//{
-//	VI_SELL_MAT mat; VI_VEC vec; 
-//	create_matrix(num_rows, num_cols, nnz, row_indices, col_indices, values, mat);
-//	create_vector(num_rows, b, vec);
-//	solver = std::make_unique<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>>(mat, vec, GMRES);
-//	solver->Solve(1000, 0.1);
-//	x = solver->GetResult();
-//}
-//
-//CXDLL_API void ses_solve_next(double* rhs, double* x) {
-//	SequentialGPUSolver<VI_SELL_MAT, VI_VEC>* gpu_seq_solver =
-//		dynamic_cast<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
-//	//SequentialCPUSolver<VI_SELL_MAT, VI_VEC>* cpu_seq_solver =
-//	//	dynamic_cast<SequentialCPUSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
-//
-//	assert((gpu_seq_solver /* || cpu_seq_solver*/), "It is not a Sequential Solver");
-//
-//	if (gpu_seq_solver) {
-//		VI_VEC vec;
-//		create_vector(solver->num_rows, rhs, vec);
-//		gpu_seq_solver->Solve(vec, 1000, 0.1);
-//	}
-//	//else if (cpu_seq_solver) {
-//	//	cpu_seq_solver->Solve(vec, 1000, 0.1);
-//	// }
-//
-//	x = solver->GetResult();
-//}
+CXDLL_API void ses_solve_begin_density_gpu(
+	int num_rows, int num_cols, int num_non_zero,
+	int* row_indices, int* col_indices, double* values, double* b, double* x)
+{
+	SolverArgs args(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, GMRES);
+
+	VI_SELL_MAT mat; VI_VEC vec; 
+	/*create_matrix(num_rows, num_cols, nnz, row_indices, col_indices, values, mat);
+	create_vector(num_rows, b, vec);*/
+	solver = std::make_unique<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>>(mat, vec, GMRES);
+	solver->Solve(1000, 0.1);
+	x = solver->GetResult();
+}
+
+CXDLL_API void ses_solve_next(double* rhs, double* x) {
+	SequentialGPUSolver<VI_SELL_MAT, VI_VEC>* gpu_seq_solver =
+		dynamic_cast<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
+
+	SequentialCPUSolver<VI_SELL_MAT, VI_VEC>* cpu_seq_solver =
+		dynamic_cast<SequentialCPUSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
+
+	assert((gpu_seq_solver  || cpu_seq_solver), "It is not a Sequential Solver");
+
+	//SolverArgs args(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, GMRES);
+
+	if (gpu_seq_solver) {
+		VI_VEC vec;
+		create_vector(solver->args.num_rows, rhs, vec);
+		gpu_seq_solver->Solve(vec, 1000, 0.1);
+	}
+	else if (cpu_seq_solver) {
+		cpu_seq_solver->Solve(vec, 1000, 0.1);
+	 }
+
+	x = solver->GetResult();
+}
