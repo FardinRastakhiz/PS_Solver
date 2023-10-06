@@ -157,26 +157,71 @@ namespace ses {
 
 	template<typename mat_T, typename vec_T>
 	void SequentialGPUSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
-		TagFactory tagFactory = ses::TagFactory(ISolver::GetAlgorithmClass(), 1.0E-10, 1000, 50U);
-		this->solverFactory = ses::SolverFactory<vec_T>(ISolver::GetAlgorithmClass(), tagFactory);
-		this->x = this->solverFactory.GetSolver(ISolver::GetAlgorithmClass())(this->A, this->b);
-		//viennacl::linalg::gmres_tag my_tag(1.0E-10, 1000, 50U);
-		//viennacl::linalg::gmres_solver<viennacl::vector<LocalType>> _my_solver(my_tag);
-
-		//this->x = viennacl::zero_vector<LocalType>(this->b.size(), viennacl::traits::context(this->b));
-
-		//this->x = _my_solver(this->A, this->b);
+		ses::TagFactory tagFactory;
+		switch (ISolver::args.algorithm)
+		{
+		case Algorithm::GMRES:
+			tagFactory = ses::TagFactory(GMRESAlgorithm(), 1.0E-10, 1000U, 50U);
+			this->solverFactory = ses::SolverFactory<vec_T>(GMRESAlgorithm(), tagFactory);
+			this->x = this->solverFactory.GetSolver(GMRESAlgorithm())(this->A, this->b);
+			break;
+		case Algorithm::CG:
+			tagFactory = ses::TagFactory(CGAlgorithm(), 1.0E-10, 1000, 50U);
+			this->solverFactory = ses::SolverFactory<vec_T>(CGAlgorithm(), tagFactory);
+			this->x = this->solverFactory.GetSolver(CGAlgorithm())(this->A, this->b);
+			break;
+		case Algorithm::BIPCG:
+			tagFactory = ses::TagFactory(BIPCGAlgorithm(), 1.0E-10, 1000, 50U);
+			this->solverFactory = ses::SolverFactory<vec_T>(BIPCGAlgorithm(), tagFactory);
+			this->x = this->solverFactory.GetSolver(BIPCGAlgorithm())(this->A, this->b);
+			break;
+		case Algorithm::PCG:
+			tagFactory = ses::TagFactory(CGAlgorithm(), 1.0E-10, 1000, 50U);
+			this->solverFactory = ses::SolverFactory<vec_T>(CGAlgorithm(), tagFactory);
+			this->x = this->solverFactory.GetSolver(CGAlgorithm())(this->A, this->b);
+			break;
+		default:
+			break;
+		}
+		throw std::exception("Not Implemented Exception");
 	}
 
 	template<typename mat_T, typename vec_T>
 	void SequentialGPUSolver<mat_T, vec_T>::Solve(LocalType* b, int iteration_count, LocalType precision) {
 		//viennacl::linalg::gmres_solver<viennacl::vector<LocalType>> _my_solver(my_tag);
 		monitor_user_data<mat_T, vec_T>	my_monitor_data(this->A, this->b, this->x);
-		this->solverFactory.GetSolver(ISolver::algorithmClass)
-			.set_monitor(my_custom_monitor<vec_T, LocalType, mat_T >, &my_monitor_data);
-		this->solverFactory.GetSolver(ISolver::algorithmClass).set_initial_guess(this->x);
-		this->x = this->solverFactory.GetSolver(ISolver::algorithmClass)(this->A, this->b);
-		//this->x = this->solverFactory.GetGMRESSolver()(this->A, this->b);
+
+		switch (ISolver::args.algorithm)
+		{
+		case Algorithm::GMRES:
+			this->solverFactory.GetSolver(GMRESAlgorithm())
+				.set_monitor(my_custom_monitor<vec_T, LocalType, mat_T >, &my_monitor_data);
+			this->solverFactory.GetSolver(GMRESAlgorithm()).set_initial_guess(this->x);
+			this->x = this->solverFactory.GetSolver(GMRESAlgorithm())(this->A, this->b);
+
+			break;
+		case Algorithm::CG:
+			this->solverFactory.GetSolver(CGAlgorithm())
+				.set_monitor(my_custom_monitor<vec_T, LocalType, mat_T >, &my_monitor_data);
+			this->solverFactory.GetSolver(CGAlgorithm()).set_initial_guess(this->x);
+			this->x = this->solverFactory.GetSolver(CGAlgorithm())(this->A, this->b);
+			break;
+		case Algorithm::BIPCG:
+			this->solverFactory.GetSolver(BIPCGAlgorithm())
+				.set_monitor(my_custom_monitor<vec_T, LocalType, mat_T >, &my_monitor_data);
+			this->solverFactory.GetSolver(BIPCGAlgorithm()).set_initial_guess(this->x);
+			this->x = this->solverFactory.GetSolver(BIPCGAlgorithm())(this->A, this->b);
+			break;
+		case Algorithm::PCG:
+			this->solverFactory.GetSolver(CGAlgorithm())
+				.set_monitor(my_custom_monitor<vec_T, LocalType, mat_T >, &my_monitor_data);
+			this->solverFactory.GetSolver(CGAlgorithm()).set_initial_guess(this->x);
+			this->x = this->solverFactory.GetSolver(CGAlgorithm())(this->A, this->b);
+			break;
+		default:
+			break;
+		}
+		throw std::exception("Not Implemented Exception");
 	}
 
 	std::vector<LocalType> vec_result;
