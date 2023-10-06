@@ -16,17 +16,13 @@ namespace ses {
 		Algorithm algorithm;
 	public:
 		TagFactory();
-		TagFactory(GMRESAlgorithm algorithm, LocalType tolerance,
-			unsigned int iteration, unsigned int krilov_dim = 50U);
+		template<typename algo_T>
+		TagFactory(algo_T algorithm, LocalType tolerance, unsigned int iteration, unsigned int krilov_dim = 50U);
 
-		void CreateTag(GMRESAlgorithm algorithmIdentifier, LocalType tolerance,
-			unsigned int iteration, unsigned int krilov_dim);
-		void CreateTag(CGAlgorithm algorithmIdentifier, LocalType tolerance,
-			unsigned int iteration, unsigned int krilov_dim);
-		void CreateTag(BIPCGAlgorithm algorithmIdentifier, LocalType tolerance,
-			unsigned int iteration, unsigned int krilov_dim);
-		void CreateTag(PCGAlgorithm algorithmIdentifier, LocalType tolerance,
-			unsigned int iteration, unsigned int krilov_dim);
+		void CreateTag(GMRESAlgorithm algorithmIdentifier, LocalType tolerance, unsigned int iteration, unsigned int krilov_dim);
+		void CreateTag(CGAlgorithm algorithmIdentifier, LocalType tolerance, unsigned int iteration, unsigned int krilov_dim);
+		void CreateTag(BIPCGAlgorithm algorithmIdentifier, LocalType tolerance, unsigned int iteration, unsigned int krilov_dim);
+		void CreateTag(PCGAlgorithm algorithmIdentifier, LocalType tolerance, unsigned int iteration, unsigned int krilov_dim);
 
 		viennacl::linalg::gmres_tag GetTag(GMRESAlgorithm algorithmIdentifier);
 		viennacl::linalg::cg_tag GetTag(CGAlgorithm algorithmIdentifier);
@@ -44,13 +40,14 @@ namespace ses {
 		TagFactory tag_factory;
 	public:
 		SolverFactory();
-		SolverFactory(AlgorithmClass algorithm, TagFactory tagFactory);
+		template<typename algo_T>
+		SolverFactory(algo_T algorithm, TagFactory tag_factory);
 
 
-		void CreateSolver(GMRESAlgorithm algorithm, TagFactory tagFactory);
-		void CreateSolver(CGAlgorithm algorithm, TagFactory tagFactory);
-		void CreateSolver(BIPCGAlgorithm algorithm, TagFactory tagFactory);
-		void CreateSolver(PCGAlgorithm algorithm, TagFactory tagFactory);
+		void CreateSolver(GMRESAlgorithm algorithm, TagFactory tag_factory);
+		void CreateSolver(CGAlgorithm algorithm, TagFactory tag_factory);
+		void CreateSolver(BIPCGAlgorithm algorithm, TagFactory tag_factory);
+		void CreateSolver(PCGAlgorithm algorithm, TagFactory tag_factory);
 
 		viennacl::linalg::gmres_solver<vec_T> GetSolver(GMRESAlgorithm algorithmIdentifier);
 		viennacl::linalg::cg_solver<vec_T> GetSolver(CGAlgorithm algorithmIdentifier);

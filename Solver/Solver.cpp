@@ -23,15 +23,10 @@ namespace ses {
 
 	ISolver::ISolver(SolverArgs args) { 
 		this->args = args; 
-		this->algorithmClass = get_algorithm_class(args.algorithm);
 	}
 
 	SolverArgs ISolver::GetArgs() {
 		return this->args;
-	}
-
-	AlgorithmClass ISolver::GetAlgorithmClass() {
-		return this->algorithmClass;
 	}
 
 	void ISolver::Solve(int iteration_count, LocalType precision) { throw std::exception("Not Implemented Exception"); }

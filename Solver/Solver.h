@@ -20,11 +20,9 @@ namespace ses {
 	class ISolver {
 	protected:
 		SolverArgs args;
-		AlgorithmClass algorithmClass;
 	public:
 		ISolver(SolverArgs args);
 		SolverArgs GetArgs();
-		AlgorithmClass GetAlgorithmClass();
 		virtual void Solve(int iteration_count = 100, LocalType precision = 1e-4);
 		virtual LocalType* GetResult();
 		virtual LocalType* CalculateB();
