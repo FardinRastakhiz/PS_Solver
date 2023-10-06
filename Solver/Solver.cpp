@@ -5,7 +5,7 @@
 #include "IPreconditioner.h"
 #include "utilities.h"
 namespace ses {
-
+	SolverArgs::SolverArgs(){}
 	SolverArgs::SolverArgs(int num_rows, int num_cols, int nnz, int* row_indices,
 		int* col_indices, double* values, double* b, Algorithm algorithm,
 		IPreconditioner preconditioner) {
@@ -21,16 +21,28 @@ namespace ses {
 		this->preconditioner = preconditioner;
 	}
 
-	ISolver::ISolver() {}
+	ISolver::ISolver(SolverArgs args) { 
+		this->args = args; 
+		this->algorithmClass = get_algorithm_class(args.algorithm);
+	}
+
+	SolverArgs ISolver::GetArgs() {
+		return this->args;
+	}
+
+	AlgorithmClass ISolver::GetAlgorithmClass() {
+		return this->algorithmClass;
+	}
+
 	void ISolver::Solve(int iteration_count, LocalType precision) { throw std::exception("Not Implemented Exception"); }
 	LocalType* ISolver::GetResult() { throw std::exception("Not Implemented Exception"); }
 
 	LocalType* ISolver::CalculateB() { throw std::exception("Not Implemented Exception"); }
 	void ISolver::SetPlatform() { }
-	void ISolver::SetLocalTypes(SolverArgs args) { }
+	void ISolver::SetLocalTypes(SolverArgs args) { this->args = args; }
 
 	template<typename mat_T, typename vec_T>
-	Solver<mat_T, vec_T>::Solver(SolverArgs args) : ISolver() {
+	Solver<mat_T, vec_T>::Solver(SolverArgs args) : ISolver(args) {
 		SetLocalTypes(args);
 	}
 	template<typename mat_T, typename vec_T>

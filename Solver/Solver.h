@@ -11,17 +11,20 @@ namespace ses {
 		double* values, * b, * x;
 		Algorithm algorithm;
 		IPreconditioner preconditioner;
+		SolverArgs();
 		SolverArgs(int num_rows, int num_cols, int nnz, int* row_indices,
 			int* col_indices, double* values, double* b, Algorithm algorithm,
 			IPreconditioner preconditioner = DummyPreconditioner());
 	};
 
 	class ISolver {
+	protected:
+		SolverArgs args;
+		AlgorithmClass algorithmClass;
 	public:
-		size_t nnz = 0;
-		size_t num_rows = 0;
-		size_t num_cols = 0;
-		ISolver();
+		ISolver(SolverArgs args);
+		SolverArgs GetArgs();
+		AlgorithmClass GetAlgorithmClass();
 		virtual void Solve(int iteration_count = 100, LocalType precision = 1e-4);
 		virtual LocalType* GetResult();
 		virtual LocalType* CalculateB();
