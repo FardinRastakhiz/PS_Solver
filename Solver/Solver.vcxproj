@@ -160,7 +160,7 @@
     <ClInclude Include="converters.h" />
     <ClInclude Include="CPUSolver.h" />
     <ClInclude Include="GPUSolver.h" />
-    <ClInclude Include="Algorithm.h" />
+    <ClInclude Include="algorithms.h" />
     <ClInclude Include="IPreconditioner.h" />
     <ClInclude Include="matrix_factory.h" />
     <ClInclude Include="SequentialCPUSolver.h" />
@@ -178,6 +178,7 @@
     <ClInclude Include="vector_factory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="algorithms.cpp" />
     <ClCompile Include="algorithm_factories.cpp" />
     <ClCompile Include="matrix_factory.cpp" />
     <ClCompile Include="preconditioner_factories.cpp" />

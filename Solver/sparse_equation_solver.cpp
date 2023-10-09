@@ -51,7 +51,7 @@ CXDLL_API void ses_solve_pressure_gpu(int num_rows, int num_cols, int nnz, int* 
 	SolverArgs args(num_rows, num_cols, nnz, row_indices, col_indices, values, b, GMRES);
 
 	// create solvers and solve the matrix
-	solver = std::make_unique<SimpleGPUSolver<VI_SELL_MAT, VI_VEC>>(args);
+	solver = std::make_unique<SimpleGPUSolver<VI_SELL_MAT, VI_VEC>> (args);
 	solver->Solve(1000, 1.0e-10);
 
 	// Get the result
@@ -116,10 +116,7 @@ CXDLL_API void ses_solve_begin_density_gpu(
 {
 	SolverArgs args(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, GMRES);
 
-	VI_SELL_MAT mat; VI_VEC vec; 
-	/*create_matrix(num_rows, num_cols, nnz, row_indices, col_indices, values, mat);
-	create_vector(num_rows, b, vec);*/
-	solver = std::make_unique<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>>(mat, vec, GMRES);
+	solver = std::make_unique<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>>(args);
 	solver->Solve(1000, 0.1);
 	x = solver->GetResult();
 }

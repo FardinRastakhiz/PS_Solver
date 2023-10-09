@@ -1,5 +1,5 @@
 #pragma once
-#include "Algorithm.h"
+#include "algorithms.h"
 #include "IPreconditioner.h"
 #include "utilities.h"
 namespace ses {

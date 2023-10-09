@@ -12,6 +12,8 @@ namespace ses {
 	{
 	private:
 		SolverFactory<vec_T> solverFactory;
+		std::vector<LocalType> vec_result;
+		std::vector<LocalType> b_result;
 		void helper_solver();
 	public:
 		SequentialGPUSolver(SolverArgs args);

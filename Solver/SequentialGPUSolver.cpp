@@ -1,5 +1,3 @@
-#pragma once
-
 #include "pch.h"
 #include "SequentialGPUSolver.h"
 
@@ -90,7 +88,7 @@
 #define BENCHMARK_RUNS          10
 
 
-#include "Algorithm.h"
+#include "algorithms.h"
 #include "IPreconditioner.h"
 #include "matrix_factory.h"
 #include "vector_factory.h"
@@ -162,8 +160,9 @@ namespace ses {
 		{
 		case Algorithm::GMRES:
 			tagFactory = ses::TagFactory(GMRESAlgorithm(), 1.0E-10, 1000U, 50U);
+			//// error is here, how to implement constructor for additional template on constructor
 			this->solverFactory = ses::SolverFactory<vec_T>(GMRESAlgorithm(), tagFactory);
-			this->x = this->solverFactory.GetSolver(GMRESAlgorithm())(this->A, this->b);
+			this->x = (this->solverFactory.GetSolver(GMRESAlgorithm()))(this->A, this->b);
 			break;
 		case Algorithm::CG:
 			tagFactory = ses::TagFactory(CGAlgorithm(), 1.0E-10, 1000, 50U);
@@ -224,7 +223,6 @@ namespace ses {
 		throw std::exception("Not Implemented Exception");
 	}
 
-	std::vector<LocalType> vec_result;
 	template<class mat_T, class vec_T>
 	LocalType* SequentialGPUSolver<mat_T, vec_T>::GetResult() {
 		vec_result = std::vector<LocalType>(this->x.size());
@@ -233,7 +231,6 @@ namespace ses {
 		return &vec_result[0];
 	}
 
-	std::vector<LocalType> b_result;
 	template<class mat_T, class vec_T>
 	LocalType* SequentialGPUSolver<mat_T, vec_T>::CalculateB() {
 		VI_VEC new_b = viennacl::linalg::prod(this->A, this->x);

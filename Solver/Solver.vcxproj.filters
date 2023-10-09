@@ -78,7 +78,7 @@
     <ClInclude Include="GPUSolver.h">
       <Filter>Header Files\ses\Solvers</Filter>
     </ClInclude>
-    <ClInclude Include="Algorithm.h">
+    <ClInclude Include="algorithms.h">
       <Filter>Header Files\ses\helpers</Filter>
     </ClInclude>
     <ClInclude Include="matrix_factory.h">
@@ -138,6 +138,9 @@
       <Filter>Source Files\ses\Solvers</Filter>
     <ClCompile Include="solver_factory.cpp">
       <Filter>Source Files\ses\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithms.cpp">
+      <Filter>Source Files\ses\helpers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
