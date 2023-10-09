@@ -1,5 +1,4 @@
 #include "pch.h"
-
 #include "vector_factory.h"
 
 //#include "viennacl/forwards.h"

@@ -1,23 +1,7 @@
-#pragma once
-
-#include "IPreconditioner.h"
-#include <exception>
+#include "pch.h"
+#include "algorithms.h"
 
 namespace ses {
-	enum Algorithm
-	{
-		CG,
-		PCG,
-		BIPCG,
-		GMRES
-	};
-
-	struct AlgorithmClass {};
-
-	struct CGAlgorithm : AlgorithmClass {};
-	struct BIPCGAlgorithm : AlgorithmClass {};
-	struct GMRESAlgorithm : AlgorithmClass {};
-	struct PCGAlgorithm : AlgorithmClass {};
 
 
 	AlgorithmClass get_algorithm_class(Algorithm algorithm) {
@@ -36,4 +20,3 @@ namespace ses {
 		throw std::exception("Not Implemented Exception");
 	}
 }
-
