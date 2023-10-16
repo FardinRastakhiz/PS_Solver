@@ -134,6 +134,10 @@ namespace ses {
 		std::cout << "SimpleGPUSolver.cpp - SetPlatform()" << std::endl;
 		std::vector<viennacl::ocl::platform> platforms = viennacl::ocl::get_platforms();
 		std::vector<viennacl::ocl::device> devices = platforms[2].devices(CL_DEVICE_TYPE_GPU);
+
+		auto context = viennacl::ocl::get_context(0);
+		if (context.current_device() == devices[0])
+			return;
 		viennacl::ocl::setup_context(0, devices[0]);
 	}
 
@@ -180,15 +184,18 @@ namespace ses {
 			this->x = this->solverFactory.GetSolver(CGAlgorithm())(this->A, this->b);
 			break;
 		default:
+			throw std::exception("Not Implemented Exception");
 			break;
 		}
-		throw std::exception("Not Implemented Exception");
 	}
 
 	template<typename mat_T, typename vec_T>
-	void SequentialGPUSolver<mat_T, vec_T>::Solve(LocalType* b, int iteration_count, LocalType precision) {
+	void SequentialGPUSolver<mat_T, vec_T>::Solve(double* b, int iteration_count, LocalType precision) {
 		//viennacl::linalg::gmres_solver<viennacl::vector<LocalType>> _my_solver(my_tag);
+		this->s_b = cast_to_local(b, this->args.num_rows);
+		create_vector(this->args.num_rows, this->s_b, this->b);
 		monitor_user_data<mat_T, vec_T>	my_monitor_data(this->A, this->b, this->x);
+
 
 		switch (ISolver::args.algorithm)
 		{
@@ -218,9 +225,9 @@ namespace ses {
 			this->x = this->solverFactory.GetSolver(CGAlgorithm())(this->A, this->b);
 			break;
 		default:
+			throw std::exception("Not Implemented Exception");
 			break;
 		}
-		throw std::exception("Not Implemented Exception");
 	}
 
 	template<class mat_T, class vec_T>
