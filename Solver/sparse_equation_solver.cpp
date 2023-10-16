@@ -44,6 +44,11 @@ using namespace std;
 using namespace ses;
 
 std::unique_ptr<ISolver> solver;
+enum TargetLibrary {
+	PETSC_CPU = 1,
+	PETSC_GPU = 2,
+	VIENNA_CL_GPU = 3
+} target_library;
 
 
 CXDLL_API void ses_solve_pressure_gpu(int num_rows, int num_cols, int nnz, int* row_indices, int* col_indices, double * values, double* b, double* x) {
@@ -119,27 +124,23 @@ CXDLL_API void ses_solve_begin_density_gpu(
 	solver = std::make_unique<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>>(args);
 	solver->Solve(1000, 0.1);
 	x = solver->GetResult();
+	target_library = VIENNA_CL_GPU;
 }
 
 CXDLL_API void ses_solve_next(double* rhs, double* x) {
-	/*SequentialGPUSolver<VI_SELL_MAT, VI_VEC>* gpu_seq_solver =
-		dynamic_cast<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
+	switch (target_library)
+	{
+	case PETSC_CPU:
+		break;
+	case PETSC_GPU:
+		break;
+	case VIENNA_CL_GPU:
+		SequentialGPUSolver<VI_SELL_MAT, VI_VEC>* gpu_seq_solver =
+			dynamic_cast<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
+		assert((gpu_seq_solver), "It is not a Sequential Solver");
 
-	SequentialCPUSolver<VI_SELL_MAT, VI_VEC>* cpu_seq_solver =
-		dynamic_cast<SequentialCPUSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
-
-	assert((gpu_seq_solver  || cpu_seq_solver), "It is not a Sequential Solver");*/
-
-	////SolverArgs args(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, GMRES);
-
-	//if (gpu_seq_solver) {
-	//	VI_VEC vec;
-	//	create_vector(solver->args.num_rows, rhs, vec);
-	//	gpu_seq_solver->Solve(vec, 1000, 0.1);
-	//}
-	//else if (cpu_seq_solver) {
-	//	cpu_seq_solver->Solve(vec, 1000, 0.1);
-	// }
-
-	//x = solver->GetResult();
+		gpu_seq_solver->Solve(rhs, 100, 0.1);
+		break;
+	}
+	x = solver->GetResult();
 }

@@ -78,11 +78,23 @@ end Module solveMatrix
         !    integer(c_int) :: solve_matrix23
         !end function solve_matrix23
         
-        function ses_solve_pressure_gpu(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, x) bind(C, name="ses_solve_pressure_gpu")
+        !function ses_solve_pressure_gpu(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, x) bind(C, name="ses_solve_pressure_gpu")
+        !    use iso_c_binding
+        !    integer(c_int), value :: num_rows, num_cols, num_non_zero
+        !    integer(c_int), dimension(*) :: row_indices, col_indices
+        !    real(c_double), dimension(*) :: values, b, x
+        !    integer(c_int) :: ses_solve_pressure_gpu
+        !end function ses_solve_pressure_gpu
+        
+        function ses_solve_pressure_cpu(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, x) bind(C, name="ses_solve_pressure_cpu")
             use iso_c_binding
             integer(c_int), value :: num_rows, num_cols, num_non_zero
             integer(c_int), dimension(*) :: row_indices, col_indices
             real(c_double), dimension(*) :: values, b, x
+<<<<<<< HEAD
+            integer(c_int) :: ses_solve_pressure_cpu
+        end function ses_solve_pressure_cpu
+=======
             integer(c_int) :: ses_solve_pressure_gpu
         end function ses_solve_pressure_gpu
         
@@ -102,6 +114,7 @@ end Module solveMatrix
             integer(c_int) :: ses_solve_next
         end function ses_solve_next
         
+>>>>>>> e9688a8 (SPAR-42 Resolve viennaCL sequential implementation bugs)
     end interface
     ! Allocate rowIndex, colIndex, Avalues, b, x, ia, and ja arrays
     allocate(rowIndex(nnz), colIndex(nnz), Avalues(nnz), b(n), x(n), ia(n+1), ja(nnz))
@@ -112,6 +125,10 @@ end Module solveMatrix
 
     write(*,*) "Simple GPU"
     !x = solve_matrix23(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
+<<<<<<< HEAD
+    !x = ses_solve_pressure_gpu(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
+    x = ses_solve_pressure_cpu(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
+=======
     x = ses_solve_pressure_gpu(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
     
     write(*,*) "Start Sequential"
@@ -119,6 +136,7 @@ end Module solveMatrix
     
     write(*,*) "Next Sequential"
     x = ses_solve_next(b, x)
+>>>>>>> e9688a8 (SPAR-42 Resolve viennaCL sequential implementation bugs)
     ! Wait for user input before exiting
     write(*,*) "Press Enter to exit"
     read(*,*)

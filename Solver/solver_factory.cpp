@@ -48,25 +48,27 @@ namespace ses {
 
 	template<typename vec_T>
 	template<typename algo_T>
-	SolverFactory<vec_T>::SolverFactory(algo_T algorithm, TagFactory tag_factory) {
-		this->CreateSolver(algorithm, tag_factory);
+	SolverFactory<vec_T>::SolverFactory(algo_T algorithm, TagFactory tag_factory): tag_factory(tag_factory){
+		this->tag_factory = tag_factory;
+
+		this->CreateSolver(algorithm);
 	}
 
 
 	template<typename vec_T>
-	void SolverFactory<vec_T>::CreateSolver(GMRESAlgorithm algorithm, TagFactory tag_factory) {
+	void SolverFactory<vec_T>::CreateSolver(GMRESAlgorithm algorithm) {
 		this->gmres_solver = new viennacl::linalg::gmres_solver<vec_T>(this->tag_factory.GetTag(algorithm));
 	}
 	template<typename vec_T>
-	void SolverFactory<vec_T>::CreateSolver(CGAlgorithm algorithm, TagFactory tag_factory) {
+	void SolverFactory<vec_T>::CreateSolver(CGAlgorithm algorithm) {
 		this->cg_solver = new viennacl::linalg::cg_solver<vec_T>(this->tag_factory.GetTag(algorithm));
 	}
 	template<typename vec_T>
-	void SolverFactory<vec_T>::CreateSolver(BIPCGAlgorithm algorithm, TagFactory tag_factory) {
+	void SolverFactory<vec_T>::CreateSolver(BIPCGAlgorithm algorithm) {
 		this->bicgstab_solver = new viennacl::linalg::bicgstab_solver<vec_T>(this->tag_factory.GetTag(algorithm));
 	}
 	template<typename vec_T>
-	void SolverFactory<vec_T>::CreateSolver(PCGAlgorithm algorithm, TagFactory tag_factory) {
+	void SolverFactory<vec_T>::CreateSolver(PCGAlgorithm algorithm) {
 		this->cg_solver = new viennacl::linalg::cg_solver<vec_T>(this->tag_factory.GetTag(algorithm));
 	}
 
@@ -93,6 +95,18 @@ namespace ses {
 
 	/*			constructor			*/
 
+
+	template SolverFactory<VI_VEC>;
+
+	template SolverFactory<VI_VEC>::SolverFactory(GMRESAlgorithm algorithm, TagFactory tag_factory);
+	template SolverFactory<VI_VEC>::SolverFactory(CGAlgorithm algorithm, TagFactory tag_factory);
+	template SolverFactory<VI_VEC>::SolverFactory(BIPCGAlgorithm algorithm, TagFactory tag_factory);
+	template SolverFactory<VI_VEC>::SolverFactory(PCGAlgorithm algorithm, TagFactory tag_factory);
+
+	template TagFactory::TagFactory(GMRESAlgorithm algorithm, LocalType tolerance, unsigned int iteration, unsigned int krilov_dim);
+	template TagFactory::TagFactory(CGAlgorithm algorithm, LocalType tolerance, unsigned int iteration, unsigned int krilov_dim);
+	template TagFactory::TagFactory(BIPCGAlgorithm algorithm, LocalType tolerance, unsigned int iteration, unsigned int krilov_dim);
+	template TagFactory::TagFactory(PCGAlgorithm algorithm, LocalType tolerance, unsigned int iteration, unsigned int krilov_dim);
 	//template SolverFactory<GMRESAlgorithm>;
 	//template SolverFactory<CGAlgorithm>;
 	//template SolverFactory<BIPCGAlgorithm>;
