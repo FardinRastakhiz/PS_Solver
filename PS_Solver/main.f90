@@ -8,12 +8,12 @@
     !!!note: in the project folder i have put two matrices for examples. a larger size (with name append of _L) and a medium size (with name append of _M). 
     
     !medium size
-    character(len=30) :: matrixFile = "Matrix_M", bFile = "Pknown_M"
-    integer, parameter :: n = 11720, nnz = 27839     ! medium size (with name append of _M)
+    !character(len=30) :: matrixFile = "Matrix_M", bFile = "Pknown_M"
+    !integer, parameter :: n = 11720, nnz = 27839     ! medium size (with name append of _M)
     
     !larger size
-    !integer, parameter :: n = 997350, nnz = 26218238     !larger size (with name append of _L)
-    !character(len=30) :: matrixFile = "Matrix_L", bFile = "Pknown_L"
+    integer, parameter :: n = 997350, nnz = 26218238     !larger size (with name append of _L)
+    character(len=30) :: matrixFile = "Matrix_L", bFile = "Pknown_L"
     
     
     integer, allocatable :: rowIndex(:), colIndex(:)
@@ -74,13 +74,21 @@ end Module solveMatrix
         !    integer(c_int) :: solve_matrix23
         !end function solve_matrix23
         
-        function ses_solve_pressure_gpu(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, x) bind(C, name="ses_solve_pressure_gpu")
+        !function ses_solve_pressure_gpu(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, x) bind(C, name="ses_solve_pressure_gpu")
+        !    use iso_c_binding
+        !    integer(c_int), value :: num_rows, num_cols, num_non_zero
+        !    integer(c_int), dimension(*) :: row_indices, col_indices
+        !    real(c_double), dimension(*) :: values, b, x
+        !    integer(c_int) :: ses_solve_pressure_gpu
+        !end function ses_solve_pressure_gpu
+        
+        function ses_solve_pressure_cpu(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, x) bind(C, name="ses_solve_pressure_cpu")
             use iso_c_binding
             integer(c_int), value :: num_rows, num_cols, num_non_zero
             integer(c_int), dimension(*) :: row_indices, col_indices
             real(c_double), dimension(*) :: values, b, x
-            integer(c_int) :: ses_solve_pressure_gpu
-        end function ses_solve_pressure_gpu
+            integer(c_int) :: ses_solve_pressure_cpu
+        end function ses_solve_pressure_cpu
     end interface
     ! Allocate rowIndex, colIndex, Avalues, b, x, ia, and ja arrays
     allocate(rowIndex(nnz), colIndex(nnz), Avalues(nnz), b(n), x(n), ia(n+1), ja(nnz))
@@ -90,7 +98,8 @@ end Module solveMatrix
     call readVector(bFile, n, b)
 
     !x = solve_matrix23(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
-    x = ses_solve_pressure_gpu(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
+    !x = ses_solve_pressure_gpu(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
+    x = ses_solve_pressure_cpu(n, n, nnz, rowIndex, colIndex, Avalues, b, x)
     ! Wait for user input before exiting
     write(*,*) "Press Enter to exit"
     read(*,*)

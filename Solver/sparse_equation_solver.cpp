@@ -22,7 +22,10 @@
 #include "Solver.h"
 #include "GPUSolver.h"
 #include "SimpleGPUSolver.h"
+#include "SimpleCPUSolver.h"
+#include "SequentialCPUSolver.h"
 #include "utilities.h"
+#include "vector_factory.h"
 
 //#include "SimpleCPUSolver.h"
 //#include "SequentialGPUSolver.h"
@@ -56,6 +59,51 @@ CXDLL_API void ses_solve_pressure_gpu(int num_rows, int num_cols, int nnz, int* 
 	save_vector_pointer(x, num_cols, "output_x.txt");
 }
 
+
+CXDLL_API void ses_solve_pressure_cpu(int num_rows, int num_cols, int nnz, int* row_indices, int* col_indices, double* values, double* b, double* x) {
+
+	SolverArgs args(num_rows, num_cols, nnz, row_indices, col_indices, values, b, GMRES);
+
+	// create solvers and solve the matrix
+	solver = std::make_unique<SimpleCPUSolver<PETSC_MAT,PETSC_VEC >>(args);
+	solver->Solve(1000, -1.0);
+	// Get the result
+	x = ses::cast_to<double>(solver->GetResult(), num_cols);
+
+	save_vector_pointer(x, num_cols, "output_x.txt");
+	// save x and b
+	if (SimpleCPUSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimpleCPUSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
+	{
+		//c->PrintX();
+		//c->PrintResultB();
+		c->Finalize();
+	}
+	
+}
+extern "C" CXDLL_API void ses_solve_begin_density_cpu(int num_rows, int num_cols, int num_non_zero, int* row_indices, int* col_indices, double* values, double* b, double* x) {
+	SolverArgs args(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, GMRES);
+
+	// create solvers and solve the matrix
+	solver = std::make_unique<SequentialCPUSolver<PETSC_MAT, PETSC_VEC >>(args);
+	solver->Solve(1000, -1.0);
+	// Get the result
+	x = ses::cast_to<double>(solver->GetResult(), num_cols);
+
+	//save_vector_pointer(x, num_cols, "output_x0.txt");
+}
+
+extern "C" CXDLL_API void ses_solve_next(int size, double* b, double* x) {
+	if (SequentialCPUSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialCPUSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
+	{
+		c->SetNewB(b);
+		c->Solve(c->b,1000 , -1.0);
+		// Get the result
+		x = ses::cast_to<double>(solver->GetResult(), size);
+
+		//save_vector_pointer(x, size, "output_x.txt");
+	}
+	
+}
 //
 //CXDLL_API void ses_solve_begin_density_gpu(int num_rows, int num_cols, int nnz, int* row_indices, int* col_indices, double* values, double* b, double* x)
 //{

@@ -8,7 +8,7 @@ extern "C" CXDLL_API void ses_solve_pressure_cpu(int num_rows, int num_cols, int
 extern "C" CXDLL_API void ses_solve_pressure_gpu(int num_rows, int num_cols, int num_non_zero, int* row_indices, int* col_indices, double* values, double* b, double* x);
 extern "C" CXDLL_API void ses_solve_begin_density_cpu(int num_rows, int num_cols, int num_non_zero, int* row_indices, int* col_indices, double* values, double* b, double* x);
 extern "C" CXDLL_API void ses_solve_begin_density_gpu(int num_rows, int num_cols, int num_non_zero, int* row_indices, int* col_indices, double* values, double* b, double* x);
-extern "C" CXDLL_API void ses_solve_next(double* b, double* x);
+extern "C" CXDLL_API void ses_solve_next(int size, double* b, double* x);
 
 
 
