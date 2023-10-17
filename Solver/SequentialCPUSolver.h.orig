@@ -12,6 +12,7 @@ namespace ses {
 	template<typename mat_T, typename vec_T>
 	class SequentialCPUSolver : public CPUSolver<mat_T, vec_T>
 	{
+<<<<<<< HEAD
 	public:
 		SequentialCPUSolver(SolverArgs args);
 		void Solve(int iteration_count = 100, LocalType precision = 1e-4) override;
@@ -21,6 +22,10 @@ namespace ses {
 		vec_T x;
 		LocalType* s_b;
 		KSP ksp;
+=======
+	protected:
+		cl_context context;
+>>>>>>> e9688a8 (SPAR-42 Resolve viennaCL sequential implementation bugs)
 	private:
 		KSPType GetKSPType(Algorithm alg);
 

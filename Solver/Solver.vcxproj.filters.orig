@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -78,7 +78,7 @@
     <ClInclude Include="GPUSolver.h">
       <Filter>Header Files\ses\Solvers</Filter>
     </ClInclude>
-    <ClInclude Include="algorithms.h">
+    <ClInclude Include="Algorithm.h">
       <Filter>Header Files\ses\helpers</Filter>
     </ClInclude>
     <ClInclude Include="matrix_factory.h">
@@ -131,16 +131,16 @@
     <ClCompile Include="Solver.cpp">
       <Filter>Source Files\ses\Solvers</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="SimpleCPUSolver.cpp">
       <Filter>Source Files\ses\Solvers</Filter>
     </ClCompile>
     <ClCompile Include="SequentialCPUSolver.cpp">
       <Filter>Source Files\ses\Solvers</Filter>
+=======
     <ClCompile Include="solver_factory.cpp">
       <Filter>Source Files\ses\Factories</Filter>
-    </ClCompile>
-    <ClCompile Include="algorithms.cpp">
-      <Filter>Source Files\ses\helpers</Filter>
+>>>>>>> 7945ed4 (SPAR-42 Update sequential part of GPU Solver)
     </ClCompile>
   </ItemGroup>
 </Project>

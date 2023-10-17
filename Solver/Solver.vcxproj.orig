@@ -119,14 +119,24 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>D:\libs\OpenCL\include;D:\libs\ViennaCL;D:\libs\boost_1_82_0;C:\petsc8\arch-mswin-c-opt\include;C:\Program Files (x86)\Microsoft SDKs\MPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+<<<<<<< HEAD
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\PETSc\include;$(SolutionDir)libs\MicrosoftSDK\Include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\Boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+=======
+      <AdditionalIncludeDirectories>D:\libs\OpenCL\include;D:\libs\ViennaCL;D:\libs\boost_1_82_0;C:\petsc8\arch-mswin-c-opt1\include;C:\Program Files (x86)\Microsoft SDKs\MPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+>>>>>>> e9688a8 (SPAR-42 Resolve viennaCL sequential implementation bugs)
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>msmpifmc.lib;msmpi.lib;OpenCL.lib;libpetsc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64;D:\libs\OpenCL\lib;C:\petsc8\arch-mswin-c-opt\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+<<<<<<< HEAD
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\MicrosoftSDK\Lib\x64;$(SolutionDir)libs\PETSc\lib;$(SolutionDir)libs\OpenCL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+=======
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64;D:\libs\OpenCL\lib;C:\petsc8\arch-mswin-c-opt1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+>>>>>>> e9688a8 (SPAR-42 Resolve viennaCL sequential implementation bugs)
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,8 +149,15 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+<<<<<<< HEAD
+      <OpenMPSupport>false</OpenMPSupport>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\PETSc\include;$(SolutionDir)libs\MicrosoftSDK\Include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\Boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+=======
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Microsoft SDKs\MPI\Include;C:\petsc8\arch-mswin-c-opt\include;D:\libs\ViennaCL;D:\libs\OpenCL\include;D:\libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Microsoft SDKs\MPI\Include;C:\petsc8\arch-mswin-c-opt1\include;D:\libs\ViennaCL2;D:\libs\OpenCL\include;D:\libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+>>>>>>> e9688a8 (SPAR-42 Resolve viennaCL sequential implementation bugs)
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,45 +165,46 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64;C:\petsc8\arch-mswin-c-opt\lib;D:\libs\OpenCL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+<<<<<<< HEAD
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\MicrosoftSDK\Lib\x64;$(SolutionDir)libs\PETSc\lib;$(SolutionDir)libs\OpenCL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+=======
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64;C:\petsc8\arch-mswin-c-opt1\lib;D:\libs\OpenCL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+>>>>>>> e9688a8 (SPAR-42 Resolve viennaCL sequential implementation bugs)
       <AdditionalDependencies>OpenCL.lib;libpetsc.lib;msmpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <ClInclude Include="converters.h" />
     <ClInclude Include="CPUSolver.h" />
-    <ClInclude Include="custom_monitor.h" />
     <ClInclude Include="GPUSolver.h" />
-    <ClInclude Include="Algorithm.h" />
-=======
-    <ClInclude Include="algorithm_factories.h" />
-    <ClInclude Include="CgAlgorithm.h" />
-    <ClInclude Include="custom_monitor.h" />
-    <ClInclude Include="IAlgorithm.h" />
->>>>>>> 69214f6 (Add viennaCL to project)
+    <ClInclude Include="algorithms.h" />
     <ClInclude Include="IPreconditioner.h" />
     <ClInclude Include="matrix_factory.h" />
     <ClInclude Include="SequentialCPUSolver.h" />
     <ClInclude Include="SequentialGPUSolver.h" />
-    <ClInclude Include="SharedTypes.h" />
     <ClInclude Include="SimpleCPUSolver.h" />
     <ClInclude Include="SimpleGPUSolver.h" />
     <ClInclude Include="Solver.h" />
+    <ClInclude Include="solver_factory.h" />
     <ClInclude Include="sparse_equation_solver.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="utilities.h" />
-<<<<<<< HEAD
+    <ClInclude Include="utilities.h">
+      <FileType>CppHeader</FileType>
+    </ClInclude>
     <ClInclude Include="vector_factory.h" />
-=======
-    <ClInclude Include="Vector.h" />
->>>>>>> 69214f6 (Add viennaCL to project)
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="algorithms.cpp" />
     <ClCompile Include="algorithm_factories.cpp" />
+    <ClCompile Include="matrix_factory.cpp" />
     <ClCompile Include="preconditioner_factories.cpp" />
+    <ClCompile Include="SequentialCPUSolver.cpp" />
+    <ClCompile Include="SequentialGPUSolver.cpp" />
+    <ClCompile Include="SimpleCPUSolver.cpp" />
+    <ClCompile Include="SimpleGPUSolver.cpp" />
     <ClCompile Include="Solver.cpp" />
+    <ClCompile Include="solver_factory.cpp" />
     <ClCompile Include="sparse_equation_solver.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -194,6 +212,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="utilities.cpp">
+      <DeploymentContent>true</DeploymentContent>
+    </ClCompile>
+    <ClCompile Include="vector_factory.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
