@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Algorithm.h"
+#include "algorithms.h"
 #include "IPreconditioner.h"
 
 #include "Solver.h"
@@ -13,5 +13,7 @@ namespace ses
 	public:
 		GPUSolver(SolverArgs args) :
 			Solver<mat_T, vec_T>(args) {	}
+
+
 	};
 }

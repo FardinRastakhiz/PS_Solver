@@ -1,12 +1,19 @@
 #include "pch.h"
+<<<<<<< HEAD
+=======
+
+>>>>>>> b84b297 (SPAR-42 Update viennaCL project)
 #include "vector_factory.h"
 
 //#include "viennacl/forwards.h"
 //#include "viennacl/vector.hpp"
 //#include "viennacl/tools/tools.hpp"
 //#include "viennacl/linalg/sparse_matrix_operations.hpp"
+<<<<<<< HEAD
 
 #include "petscksp.h"
+=======
+>>>>>>> b84b297 (SPAR-42 Update viennaCL project)
 #include "viennacl/scalar.hpp"
 #include "viennacl/vector.hpp"
 #include <vector>
@@ -15,17 +22,17 @@ namespace ses {
 	void create_vector(int size, LocalType* values, VI_VEC& out_vec) {
 		out_vec = VI_VEC(size);
 		//std::vector<int, PreAllocator<int>> cpu_vec(0, PreAllocator<int>(&values2[0], size));
+<<<<<<< HEAD
+		std::vector<int> cpu_vec(size);
+=======
 		std::vector<LocalType> cpu_vec(size);
+>>>>>>> b84b297 (SPAR-42 Update viennaCL project)
 		for (size_t i = 0; i < size; i++)
 		{
 			cpu_vec[i] = values[i];
 		}
 		viennacl::copy(cpu_vec.begin(), cpu_vec.end(), out_vec.begin());
-
-		/*std::vector<LocalType> vec(out_vec.size());
-		viennacl::copy(out_vec.begin(), out_vec.end(), vec.begin());
-		LocalType* vec2 = &vec[0];
-		std::cout << "vec2: " << vec2[10099] << std::endl;*/
+<<<<<<< HEAD
 	}
 	void fill_petsc_vector(int size, LocalType* values, PETSC_VEC& out_vec) {
 		// Set rhs values
@@ -52,6 +59,18 @@ namespace ses {
 	//		VecAssemblyBegin(out_vecs[i]);
 	//		VecAssemblyEnd(out_vecs[i]);
 	//	}
+
+	//}
+
+	
+}
+=======
+
+		/*std::vector<LocalType> vec(out_vec.size());
+		viennacl::copy(out_vec.begin(), out_vec.end(), vec.begin());
+		LocalType* vec2 = &vec[0];
+		std::cout << "vec2: " << vec2[10099] << std::endl;*/
+	}
 }
 
 ////
@@ -95,3 +114,4 @@ namespace ses {
 ////
 ////#define PRE_ALLOCATOR
 ////#endif
+>>>>>>> b84b297 (SPAR-42 Update viennaCL project)
