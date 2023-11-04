@@ -119,14 +119,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>D:\libs\OpenCL\include;D:\libs\ViennaCL;D:\libs\boost_1_82_0;C:\petsc8\arch-mswin-c-opt\include;C:\Program Files (x86)\Microsoft SDKs\MPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\customized-petsc-viennacl-openmp\include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>msmpifmc.lib;msmpi.lib;OpenCL.lib;libpetsc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64;D:\libs\OpenCL\lib;C:\petsc8\arch-mswin-c-opt\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenCL.lib;libpetsc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\OpenCL\lib;$(SolutionDir)libs\customized-petsc-viennacl-openmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,9 +140,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Microsoft SDKs\MPI\Include;C:\petsc8\arch-mswin-c-opt\include;D:\libs\ViennaCL;D:\libs\OpenCL\include;D:\libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\customized-petsc-viennacl-openmp\include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,22 +150,22 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64;C:\petsc8\arch-mswin-c-opt\lib;D:\libs\OpenCL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenCL.lib;libpetsc.lib;msmpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\OpenCL\lib;$(SolutionDir)libs\customized-petsc-viennacl-openmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenCL.lib;libpetsc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="converters.h" />
-    <ClInclude Include="CPUSolver.h" />
-    <ClInclude Include="GPUSolver.h" />
-    <ClInclude Include="Algorithm.h" />
+    <ClInclude Include="PetscSolver.h" />
+    <ClInclude Include="ViennaSolver.h" />
+    <ClInclude Include="algorithms.h" />
     <ClInclude Include="IPreconditioner.h" />
     <ClInclude Include="matrix_factory.h" />
-    <ClInclude Include="SequentialCPUSolver.h" />
-    <ClInclude Include="SequentialGPUSolver.h" />
-    <ClInclude Include="SimpleCPUSolver.h" />
-    <ClInclude Include="SimpleGPUSolver.h" />
+    <ClInclude Include="SequentialPetscSolver.h" />
+    <ClInclude Include="SequentialViennaSolver.h" />
+    <ClInclude Include="SimplePetscSolver.h" />
+    <ClInclude Include="SimpleViennaSolver.h" />
     <ClInclude Include="Solver.h" />
+    <ClInclude Include="solver_factory.h" />
     <ClInclude Include="sparse_equation_solver.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -175,12 +175,16 @@
     <ClInclude Include="vector_factory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="algorithms.cpp" />
     <ClCompile Include="algorithm_factories.cpp" />
     <ClCompile Include="matrix_factory.cpp" />
     <ClCompile Include="preconditioner_factories.cpp" />
-    <ClCompile Include="SequentialGPUSolver.cpp" />
-    <ClCompile Include="SimpleGPUSolver.cpp" />
+    <ClCompile Include="SequentialPetscSolver.cpp" />
+    <ClCompile Include="SequentialViennaSolver.cpp" />
+    <ClCompile Include="SimplePetscSolver.cpp" />
+    <ClCompile Include="SimpleViennaSolver.cpp" />
     <ClCompile Include="Solver.cpp" />
+    <ClCompile Include="solver_factory.cpp" />
     <ClCompile Include="sparse_equation_solver.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
