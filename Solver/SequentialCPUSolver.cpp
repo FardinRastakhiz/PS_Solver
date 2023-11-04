@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SequentialCPUSolver.h"
-#include "Algorithm.h"
+#include "algorithms.h"
 #include "IPreconditioner.h"
 #include "matrix_factory.h"
 #include "vector_factory.h"
@@ -76,8 +76,8 @@ namespace ses {
 	}
 	template<typename mat_T, typename vec_T>
 	void SequentialCPUSolver<mat_T, vec_T>::SetNewB(LocalType* b) {
-		create_petsc_vector(this->num_rows, this->b);
-		fill_petsc_vector(this->num_rows, b, this->b);
+		create_petsc_vector(this->args.num_rows, this->b);
+		fill_petsc_vector(this->args.num_rows, b, this->b);
 	}
 	template<class mat_T, class vec_T>
 	KSPType SequentialCPUSolver<mat_T, vec_T>::GetKSPType(Algorithm alg) {
