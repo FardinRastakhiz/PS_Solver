@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "SimpleCPUSolver.h"
+#include "SimplePetscSolver.h"
 
 
 
@@ -24,12 +24,12 @@
 using namespace std::chrono;
 namespace ses {
 	template<class mat_T, class vec_T>
-	SimpleCPUSolver<mat_T, vec_T>::SimpleCPUSolver(SolverArgs args) :
-		CPUSolver<mat_T, vec_T>(args) {
+	SimplePetscSolver<mat_T, vec_T>::SimplePetscSolver(SolverArgs args) :
+		PetscSolver<mat_T, vec_T>(args) {
 		SetLocalTypes(args);
 	}
 	template<class mat_T, class vec_T>
-	void SimpleCPUSolver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
+	void SimplePetscSolver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
 		PetscErrorCode ierr;
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
 		create_matrix(args.num_rows, args.num_cols, args.nnz, args.row_indices, args.col_indices, this->s_values, this->A);
@@ -41,7 +41,7 @@ namespace ses {
 		this->algorithm = args.algorithm;
 	}
 	template<class mat_T, class vec_T>
-	void SimpleCPUSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
+	void SimplePetscSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
 		PetscErrorCode ierr;
 		PetscMPIInt    size, rank;
 		if(iteration_count != -1)
@@ -77,14 +77,14 @@ namespace ses {
 	}
 
 	template<class mat_T, class vec_T>
-	LocalType* SimpleCPUSolver<mat_T, vec_T>::GetResult() {
+	LocalType* SimplePetscSolver<mat_T, vec_T>::GetResult() {
 		PetscScalar* a;
 		VecGetArray(this->x, &a);
 		return (LocalType*)a;
 	}
 
 	template<class mat_T, class vec_T>
-	void SimpleCPUSolver<mat_T, vec_T>::PrintX() {
+	void SimplePetscSolver<mat_T, vec_T>::PrintX() {
 		// Optional: Print the solution
 		PetscViewer viewer;
 		PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_x.txt", &viewer); // open an ASCII file for writing
@@ -93,7 +93,7 @@ namespace ses {
 	}
 
 	template<class mat_T, class vec_T>
-	void SimpleCPUSolver<mat_T, vec_T>::PrintResultB() {
+	void SimplePetscSolver<mat_T, vec_T>::PrintResultB() {
 
 		/* Now, multiply A by x and check if it equals b */
 		MatMult(this->A, this->x, this->y); // y = A*x
@@ -105,14 +105,14 @@ namespace ses {
 	}
 
 	template<class mat_T, class vec_T>
-	void SimpleCPUSolver<mat_T, vec_T>::Finalize() {
+	void SimplePetscSolver<mat_T, vec_T>::Finalize() {
 		VecDestroy(&this->x);
 		VecDestroy(&this->b);
 		MatDestroy(&this->A);
 		PetscFinalize();
 	}
 	template<class mat_T, class vec_T>
-	KSPType SimpleCPUSolver<mat_T, vec_T>::GetKSPType(Algorithm alg) {
+	KSPType SimplePetscSolver<mat_T, vec_T>::GetKSPType(Algorithm alg) {
 		KSPType type;
 		switch (this->algorithm) {
 		case GMRES:
@@ -128,6 +128,6 @@ namespace ses {
 
 
 	/*			constructor			*/
-	template SimpleCPUSolver<PETSC_MAT, PETSC_VEC>;
+	template SimplePetscSolver<PETSC_MAT, PETSC_VEC>;
 
 }

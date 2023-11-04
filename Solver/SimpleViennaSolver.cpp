@@ -1,8 +1,8 @@
 #pragma once
 #include "pch.h"
-#include "SimpleGPUSolver.h"
+#include "SimpleViennaSolver.h"
 //#include "Solver.h"
-//#include "GPUSolver.h"
+//#include "ViennaSolver.h"
 
 
 
@@ -96,23 +96,23 @@
 
 namespace ses {
 	template<class mat_T, class vec_T>
-	SimpleGPUSolver<mat_T, vec_T>::SimpleGPUSolver(SolverArgs args) :
-		GPUSolver<mat_T, vec_T>(args) {
+	SimpleViennaSolver<mat_T, vec_T>::SimpleViennaSolver(SolverArgs args) :
+		ViennaSolver<mat_T, vec_T>(args) {
 		SetPlatform();
 		SetLocalTypes(args);
 	}
 
 	template<class mat_T, class vec_T>
-	void SimpleGPUSolver<mat_T, vec_T>::SetPlatform() {
-		std::cout << "SimpleGPUSolver.cpp - SetPlatform()" << std::endl;
+	void SimpleViennaSolver<mat_T, vec_T>::SetPlatform() {
+		std::cout << "SimpleViennaSolver.cpp - SetPlatform()" << std::endl;
 		std::vector<viennacl::ocl::platform> platforms = viennacl::ocl::get_platforms();
 		std::vector<viennacl::ocl::device> devices = platforms[2].devices(CL_DEVICE_TYPE_GPU);
 		viennacl::ocl::setup_context(0, devices[0]);
 	}
 
 	template<class mat_T, class vec_T>
-	void SimpleGPUSolver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
-		std::cout << "SimpleGPUSolver.cpp - SetLocalTypes(SolverArgs args)" << std::endl;
+	void SimpleViennaSolver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
+		std::cout << "SimpleViennaSolver.cpp - SetLocalTypes(SolverArgs args)" << std::endl;
 		// create target library vectors and matrices
 		Solver<mat_T, vec_T>::SetLocalTypes(args);
 		/*VI_SELL_MAT mat; VI_VEC vec;*/
@@ -126,7 +126,7 @@ namespace ses {
 	}
 
 	template<class mat_T, class vec_T>
-	void SimpleGPUSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
+	void SimpleViennaSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
 		viennacl::linalg::gmres_tag my_tag(1.0E-10, 1000, 50U);
 		viennacl::linalg::gmres_solver<viennacl::vector<LocalType>> _my_solver(my_tag);
 
@@ -135,7 +135,7 @@ namespace ses {
 	}
 	std::vector<LocalType> vec_result;
 	template<class mat_T, class vec_T>
-	LocalType* SimpleGPUSolver<mat_T, vec_T>::GetResult() {
+	LocalType* SimpleViennaSolver<mat_T, vec_T>::GetResult() {
 		vec_result = std::vector<LocalType>(this->x.size());
 		viennacl::copy(this->x.begin(), this->x.end(), vec_result.begin());
 		//LocalType* vec2 = &vec[0];
@@ -144,7 +144,7 @@ namespace ses {
 
 	std::vector<LocalType> b_result;
 	template<class mat_T, class vec_T>
-	LocalType* SimpleGPUSolver<mat_T, vec_T>::CalculateB() {
+	LocalType* SimpleViennaSolver<mat_T, vec_T>::CalculateB() {
 		VI_VEC new_b = viennacl::linalg::prod(this->A, this->x);
 		b_result = std::vector<LocalType>(new_b.size());
 		viennacl::copy(new_b.begin(), new_b.end(), b_result.begin());
@@ -153,7 +153,7 @@ namespace ses {
 	}
 
 	template<class mat_T, class vec_T>
-	void SimpleGPUSolver<mat_T, vec_T>::PrintActiveDevice() {
+	void SimpleViennaSolver<mat_T, vec_T>::PrintActiveDevice() {
 		viennacl::ocl::device current_device = viennacl::ocl::current_device();
 		std::cout << "current device is:" << current_device.name() << std::endl;
 	}
@@ -164,8 +164,8 @@ namespace ses {
 
 
 	/*			constructor			*/
-	template SimpleGPUSolver<VI_COMP_Mat, VI_VEC>;
-	template SimpleGPUSolver<VI_COO_Mat, VI_VEC>;
-	template SimpleGPUSolver<VI_SELL_MAT, VI_VEC>;
+	template SimpleViennaSolver<VI_COMP_Mat, VI_VEC>;
+	template SimpleViennaSolver<VI_COO_Mat, VI_VEC>;
+	template SimpleViennaSolver<VI_SELL_MAT, VI_VEC>;
 
 }

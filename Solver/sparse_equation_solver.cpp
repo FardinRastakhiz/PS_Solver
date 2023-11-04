@@ -20,17 +20,17 @@
 //#include <memory>
 
 #include "Solver.h"
-#include "GPUSolver.h"
-#include "SimpleGPUSolver.h"
-#include "SimpleCPUSolver.h"
-#include "SequentialGPUSolver.h"
-#include "SequentialCPUSolver.h"
+#include "ViennaSolver.h"
+#include "SimpleViennaSolver.h"
+#include "SimplePetscSolver.h"
+#include "SequentialViennaSolver.h"
+#include "SequentialPetscSolver.h"
 #include "utilities.h"
 #include "vector_factory.h"
 
-//#include "SimpleCPUSolver.h"
-//#include "SequentialGPUSolver.h"
-//#include "SequentialCPUSolver.h"
+//#include "SimplePetscSolver.h"
+//#include "SequentialViennaSolver.h"
+//#include "SequentialPetscSolver.h"
 //#include "matrix_factory.h"
 //#include "vector_factory.h"
 //#include "algorithms.h"
@@ -56,7 +56,7 @@ CXDLL_API void ses_solve_pressure_gpu(int num_rows, int num_cols, int nnz, int* 
 	SolverArgs args(num_rows, num_cols, nnz, row_indices, col_indices, values, b, GMRES);
 
 	// create solvers and solve the matrix
-	solver = std::make_unique<SimpleGPUSolver<VI_SELL_MAT, VI_VEC>> (args);
+	solver = std::make_unique<SimpleViennaSolver<VI_SELL_MAT, VI_VEC>> (args);
 	solver->Solve(1000, 1.0e-10);
 
 	// Get the result
@@ -75,14 +75,14 @@ CXDLL_API void ses_solve_pressure_cpu(int num_rows, int num_cols, int nnz, int* 
 	SolverArgs args(num_rows, num_cols, nnz, row_indices, col_indices, values, b, GMRES);
 
 	// create solvers and solve the matrix
-	solver = std::make_unique<SimpleCPUSolver<PETSC_MAT,PETSC_VEC >>(args);
+	solver = std::make_unique<SimplePetscSolver<PETSC_MAT,PETSC_VEC >>(args);
 	solver->Solve(1000, -1.0);
 	// Get the result
 	x = ses::cast_to<double>(solver->GetResult(), num_cols);
 
 	save_vector_pointer(x, num_cols, "output_x.txt");
 	// save x and b
-	if (SimpleCPUSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimpleCPUSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
+	if (SimplePetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimplePetscSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
 	{
 		//c->PrintX();
 		//c->PrintResultB();
@@ -94,7 +94,7 @@ extern "C" CXDLL_API void ses_solve_begin_density_cpu(int num_rows, int num_cols
 	SolverArgs args(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, GMRES);
 
 	// create solvers and solve the matrix
-	solver = std::make_unique<SequentialCPUSolver<PETSC_MAT, PETSC_VEC >>(args);
+	solver = std::make_unique<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >>(args);
 	solver->Solve(1000, -1.0);
 	// Get the result
 	x = ses::cast_to<double>(solver->GetResult(), num_cols);
@@ -103,7 +103,7 @@ extern "C" CXDLL_API void ses_solve_begin_density_cpu(int num_rows, int num_cols
 }
 
 extern "C" CXDLL_API void ses_solve_next(int size, double* b, double* x) {
-	if (SequentialCPUSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialCPUSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
+	if (SequentialPetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
 	{
 		c->SetNewB(b);
 		c->Solve(c->b,1000 , -1.0);
@@ -121,7 +121,7 @@ CXDLL_API void ses_solve_begin_density_gpu(
 {
 	SolverArgs args(num_rows, num_cols, num_non_zero, row_indices, col_indices, values, b, GMRES);
 
-	solver = std::make_unique<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>>(args);
+	solver = std::make_unique<SequentialViennaSolver<VI_SELL_MAT, VI_VEC>>(args);
 	solver->Solve(1000, 0.1);
 	x = solver->GetResult();
 	target_library = VIENNA_CL_GPU;
@@ -135,8 +135,8 @@ CXDLL_API void ses_solve_next(double* rhs, double* x) {
 	case PETSC_GPU:
 		break;
 	case VIENNA_CL_GPU:
-		SequentialGPUSolver<VI_SELL_MAT, VI_VEC>* gpu_seq_solver =
-			dynamic_cast<SequentialGPUSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
+		SequentialViennaSolver<VI_SELL_MAT, VI_VEC>* gpu_seq_solver =
+			dynamic_cast<SequentialViennaSolver<VI_SELL_MAT, VI_VEC>*>(solver.get());
 		assert((gpu_seq_solver), "It is not a Sequential Solver");
 
 		gpu_seq_solver->Solve(rhs, 100, 0.1);
