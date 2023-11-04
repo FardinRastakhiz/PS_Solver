@@ -33,7 +33,7 @@
 //#include "SequentialCPUSolver.h"
 //#include "matrix_factory.h"
 //#include "vector_factory.h"
-//#include "Algorithm.h"
+//#include "algorithms.h"
 //#include "converters.h"
 //#include "IPreconditioner.h"
 //#include "utilities.h"
