@@ -119,14 +119,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>D:\libs\OpenCL\include;D:\libs\ViennaCL;D:\libs\boost_1_82_0;C:\petsc8\arch-mswin-c-opt1\include;C:\Program Files (x86)\Microsoft SDKs\MPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\boost;$(SolutionDir)libs\PETSc\include;$(SolutionDir)libs\MicrosoftSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>msmpifmc.lib;msmpi.lib;OpenCL.lib;libpetsc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64;D:\libs\OpenCL\lib;C:\petsc8\arch-mswin-c-opt1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\MicrosoftSDK\Lib\x64;$(SolutionDir)libs\OpenCL\lib;$(SolutionDir)libs\PETSc\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,7 +140,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Microsoft SDKs\MPI\Include;C:\petsc8\arch-mswin-c-opt1\include;D:\libs\ViennaCL2;D:\libs\OpenCL\include;D:\libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\boost;$(SolutionDir)libs\PETSc\include;$(SolutionDir)libs\MicrosoftSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
@@ -150,12 +150,11 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64;C:\petsc8\arch-mswin-c-opt1\lib;D:\libs\OpenCL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\MicrosoftSDK\Lib\x64;$(SolutionDir)libs\OpenCL\lib;$(SolutionDir)libs\PETSc\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenCL.lib;libpetsc.lib;msmpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="converters.h" />
     <ClInclude Include="CPUSolver.h" />
     <ClInclude Include="GPUSolver.h" />
     <ClInclude Include="algorithms.h" />
