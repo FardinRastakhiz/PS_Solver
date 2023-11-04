@@ -8,10 +8,10 @@
 namespace ses
 {
 	template<typename mat_T, typename vec_T>
-	class GPUSolver : public Solver<mat_T, vec_T>
+	class ViennaSolver : public Solver<mat_T, vec_T>
 	{
 	public:
-		GPUSolver(SolverArgs args) :
+		ViennaSolver(SolverArgs args) :
 			Solver<mat_T, vec_T>(args) {	}
 
 

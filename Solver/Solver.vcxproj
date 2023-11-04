@@ -119,14 +119,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\boost;$(SolutionDir)libs\PETSc\include;$(SolutionDir)libs\MicrosoftSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\customized-petsc-viennacl-openmp\include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>msmpifmc.lib;msmpi.lib;OpenCL.lib;libpetsc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)libs\MicrosoftSDK\Lib\x64;$(SolutionDir)libs\OpenCL\lib;$(SolutionDir)libs\PETSc\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenCL.lib;libpetsc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\OpenCL\lib;$(SolutionDir)libs\customized-petsc-viennacl-openmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,7 +140,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\boost;$(SolutionDir)libs\PETSc\include;$(SolutionDir)libs\MicrosoftSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\customized-petsc-viennacl-openmp\include;$(SolutionDir)libs\ViennaCL;$(SolutionDir)libs\OpenCL\include;$(SolutionDir)libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
@@ -150,20 +150,20 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(SolutionDir)libs\MicrosoftSDK\Lib\x64;$(SolutionDir)libs\OpenCL\lib;$(SolutionDir)libs\PETSc\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenCL.lib;libpetsc.lib;msmpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\OpenCL\lib;$(SolutionDir)libs\customized-petsc-viennacl-openmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenCL.lib;libpetsc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CPUSolver.h" />
-    <ClInclude Include="GPUSolver.h" />
+    <ClInclude Include="PetscSolver.h" />
+    <ClInclude Include="ViennaSolver.h" />
     <ClInclude Include="algorithms.h" />
     <ClInclude Include="IPreconditioner.h" />
     <ClInclude Include="matrix_factory.h" />
-    <ClInclude Include="SequentialCPUSolver.h" />
-    <ClInclude Include="SequentialGPUSolver.h" />
-    <ClInclude Include="SimpleCPUSolver.h" />
-    <ClInclude Include="SimpleGPUSolver.h" />
+    <ClInclude Include="SequentialPetscSolver.h" />
+    <ClInclude Include="SequentialViennaSolver.h" />
+    <ClInclude Include="SimplePetscSolver.h" />
+    <ClInclude Include="SimpleViennaSolver.h" />
     <ClInclude Include="Solver.h" />
     <ClInclude Include="solver_factory.h" />
     <ClInclude Include="sparse_equation_solver.h" />
@@ -179,10 +179,10 @@
     <ClCompile Include="algorithm_factories.cpp" />
     <ClCompile Include="matrix_factory.cpp" />
     <ClCompile Include="preconditioner_factories.cpp" />
-    <ClCompile Include="SequentialCPUSolver.cpp" />
-    <ClCompile Include="SequentialGPUSolver.cpp" />
-    <ClCompile Include="SimpleCPUSolver.cpp" />
-    <ClCompile Include="SimpleGPUSolver.cpp" />
+    <ClCompile Include="SequentialPetscSolver.cpp" />
+    <ClCompile Include="SequentialViennaSolver.cpp" />
+    <ClCompile Include="SimplePetscSolver.cpp" />
+    <ClCompile Include="SimpleViennaSolver.cpp" />
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="solver_factory.cpp" />
     <ClCompile Include="sparse_equation_solver.cpp" />

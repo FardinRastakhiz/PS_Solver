@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "SequentialGPUSolver.h"
+#include "SequentialViennaSolver.h"
 
 //#include "Solver.h"
-//#include "GPUSolver.h"
+//#include "ViennaSolver.h"
 
 
 
@@ -121,8 +121,8 @@ namespace ses {
 
 
 	template<typename mat_T, typename vec_T>
-	SequentialGPUSolver<mat_T, vec_T>::SequentialGPUSolver(SolverArgs args) :
-		GPUSolver<mat_T, vec_T>(args) {
+	SequentialViennaSolver<mat_T, vec_T>::SequentialViennaSolver(SolverArgs args) :
+		ViennaSolver<mat_T, vec_T>(args) {
 		SetPlatform();
 		SetLocalTypes(args);
 
@@ -130,8 +130,8 @@ namespace ses {
 	}
 
 	template<class mat_T, class vec_T>
-	void SequentialGPUSolver<mat_T, vec_T>::SetPlatform() {
-		std::cout << "SimpleGPUSolver.cpp - SetPlatform()" << std::endl;
+	void SequentialViennaSolver<mat_T, vec_T>::SetPlatform() {
+		std::cout << "SimpleViennaSolver.cpp - SetPlatform()" << std::endl;
 		std::vector<viennacl::ocl::platform> platforms = viennacl::ocl::get_platforms();
 		std::vector<viennacl::ocl::device> devices = platforms[2].devices(CL_DEVICE_TYPE_GPU);
 
@@ -142,8 +142,8 @@ namespace ses {
 	}
 
 	template<class mat_T, class vec_T>
-	void SequentialGPUSolver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
-		std::cout << "SimpleGPUSolver.cpp - SetLocalTypes(SolverArgs args)" << std::endl;
+	void SequentialViennaSolver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
+		std::cout << "SimpleViennaSolver.cpp - SetLocalTypes(SolverArgs args)" << std::endl;
 		// create target library vectors and matrices
 		Solver<mat_T, vec_T>::SetLocalTypes(args);
 		/*VI_SELL_MAT mat; VI_VEC vec;*/
@@ -152,13 +152,13 @@ namespace ses {
 	}
 
 	template<typename mat_T, typename vec_T>
-	void SequentialGPUSolver<mat_T, vec_T>::helper_solver() {
+	void SequentialViennaSolver<mat_T, vec_T>::helper_solver() {
 		throw std::exception("Not Implemented Exception");
 	}
 
 
 	template<typename mat_T, typename vec_T>
-	void SequentialGPUSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
+	void SequentialViennaSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
 		ses::TagFactory tagFactory;
 		switch (ISolver::args.algorithm)
 		{
@@ -190,7 +190,7 @@ namespace ses {
 	}
 
 	template<typename mat_T, typename vec_T>
-	void SequentialGPUSolver<mat_T, vec_T>::Solve(double* b, int iteration_count, LocalType precision) {
+	void SequentialViennaSolver<mat_T, vec_T>::Solve(double* b, int iteration_count, LocalType precision) {
 		//viennacl::linalg::gmres_solver<viennacl::vector<LocalType>> _my_solver(my_tag);
 		this->s_b = cast_to_local(b, this->args.num_rows);
 		create_vector(this->args.num_rows, this->s_b, this->b);
@@ -231,7 +231,7 @@ namespace ses {
 	}
 
 	template<class mat_T, class vec_T>
-	LocalType* SequentialGPUSolver<mat_T, vec_T>::GetResult() {
+	LocalType* SequentialViennaSolver<mat_T, vec_T>::GetResult() {
 		vec_result = std::vector<LocalType>(this->x.size());
 		viennacl::copy(this->x.begin(), this->x.end(), vec_result.begin());
 		//LocalType* vec2 = &vec[0];
@@ -239,7 +239,7 @@ namespace ses {
 	}
 
 	template<class mat_T, class vec_T>
-	LocalType* SequentialGPUSolver<mat_T, vec_T>::CalculateB() {
+	LocalType* SequentialViennaSolver<mat_T, vec_T>::CalculateB() {
 		VI_VEC new_b = viennacl::linalg::prod(this->A, this->x);
 		b_result = std::vector<LocalType>(new_b.size());
 		viennacl::copy(new_b.begin(), new_b.end(), b_result.begin());
@@ -248,7 +248,7 @@ namespace ses {
 	}
 
 	template<class mat_T, class vec_T>
-	void SequentialGPUSolver<mat_T, vec_T>::PrintActiveDevice() {
+	void SequentialViennaSolver<mat_T, vec_T>::PrintActiveDevice() {
 		viennacl::ocl::device current_device = viennacl::ocl::current_device();
 		std::cout << "current device is:" << current_device.name() << std::endl;
 	}
@@ -256,9 +256,9 @@ namespace ses {
 
 
 	/*			constructor			*/
-	template SequentialGPUSolver<VI_COMP_Mat, VI_VEC>;
-	template SequentialGPUSolver<VI_COO_Mat, VI_VEC>;
-	template SequentialGPUSolver<VI_SELL_MAT, VI_VEC>;
+	template SequentialViennaSolver<VI_COMP_Mat, VI_VEC>;
+	template SequentialViennaSolver<VI_COO_Mat, VI_VEC>;
+	template SequentialViennaSolver<VI_SELL_MAT, VI_VEC>;
 }
 
 
