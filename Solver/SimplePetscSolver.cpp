@@ -42,12 +42,13 @@ namespace ses {
 	}
 	template<class mat_T, class vec_T>
 	void SimplePetscSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
+
 		PetscErrorCode ierr;
 		PetscMPIInt    size, rank;
-		if(iteration_count != -1)
-		PetscOptionsSetValue(NULL, "-ksp_max_it", std::to_string(iteration_count).c_str());
-		if(precision != -1.0)
-		PetscOptionsSetValue(NULL, "-ksp_atol", std::to_string(precision).c_str());
+		if (iteration_count != -1)
+			PetscOptionsSetValue(NULL, "-ksp_max_it", std::to_string(iteration_count).c_str());
+		if (precision != -1.0)
+			PetscOptionsSetValue(NULL, "-ksp_atol", std::to_string(precision).c_str());
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
 		PetscPrintf(PETSC_COMM_WORLD, "PETSC Initialized \n");
 
@@ -75,7 +76,23 @@ namespace ses {
 		KSPDestroy(&ksp);
 
 	}
-
+	// call below function always before solve function
+	template<class mat_T, class vec_T>
+	void SimplePetscSolver<mat_T, vec_T>::SetOptions(PetscBackend backend, int platform, int device , int num_threads) {
+		if (backend == PetscBackend::OPENMP) {
+			PetscOptionsSetValue(NULL, "-mat_type", "aijviennacl");
+			PetscOptionsSetValue(NULL, "-vec_type", "viennacl");
+			PetscOptionsSetValue(NULL, "-viennacl_backend", "openmp");
+			PetscOptionsSetValue(NULL, "-omp_num_threads", std::to_string(num_threads).c_str());
+		}
+		if (backend == PetscBackend::OPENCL) {
+			PetscOptionsSetValue(NULL, "-mat_type", "aijviennacl");
+			PetscOptionsSetValue(NULL, "-vec_type", "viennacl");
+			PetscOptionsSetValue(NULL, "-viennacl_backend", "opencl");
+			PetscOptionsSetValue(NULL, "-viennacl_opencl_device", std::to_string(device).c_str());
+			PetscOptionsSetValue(NULL, "-viennacl_opencl_platform", std::to_string(platform).c_str());
+		}
+	}
 	template<class mat_T, class vec_T>
 	LocalType* SimplePetscSolver<mat_T, vec_T>::GetResult() {
 		PetscScalar* a;
