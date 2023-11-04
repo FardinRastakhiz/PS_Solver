@@ -124,15 +124,39 @@ end Module solveMatrix
     !save as vtk
     INTEGER::firstFlag,firstVtkType
     
+    ! c++ solvers parameters
+    ! below codes can be defined somewhere else
+    integer :: solverLibrary = 2; ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
+    integer :: useOpenMp = 1; ! acceptable values : 0 = dont use openMP , 1 = use openMP
+    integer :: numOfThreads = 8; ! acceptable values : any positive integer value
+    integer :: platform = 2 ! acceptable values should be extracted from ses_get_devices function
+    integer :: device = 0 ! acceptable values should be extracted from ses_get_devices function
+    integer :: iterationCount = -1 ! acceptable values : -1 = default , any positive integer value
+    real :: precision = -1.0 ! acceptable values : -1 = default , any positive double value
+    integer :: returnValue
+    ! c++ solvers interfaces
     interface
-        function solve_matrix(numRows, numNonzero, rowIndices, colIndices, values, b, x) bind(C, name="solve_matrix")
+        function ses_solve_pressure_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, iterationCount, precision, useOpenMp, numOfThreads) bind(C, name="ses_solve_pressure_cpu")
             use iso_c_binding
-            integer(c_int), value :: numRows, numNonzero
+            integer(c_int), value :: numRows, numNonzero, iterationCount, useOpenMp, numOfThreads
             integer(c_int), dimension(*) :: rowIndices, colIndices
             real(c_double), dimension(*) :: values, b, x
-            integer(c_int) :: solve_matrix
-        end function solve_matrix
+            real(c_double), value :: precision
+            integer(c_int) :: ses_solve_pressure_cpu
+        end function ses_solve_pressure_cpu
     end interface
+    
+    interface
+        function ses_solve_pressure_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, solverLibrary, iterationCount, precision, platform , device) bind(C, name="ses_solve_pressure_gpu")
+            use iso_c_binding
+            integer(c_int), value :: numRows, numNonzero, solverLibrary, iterationCount, platform, device
+            integer(c_int), dimension(*) :: rowIndices, colIndices
+            real(c_double), dimension(*) :: values, b, x
+            real(c_double), value :: precision
+            integer(c_int) :: ses_solve_pressure_gpu
+        end function ses_solve_pressure_gpu
+    end interface
+
     ! Allocate rowIndex, colIndex, Avalues, b, x, ia, and ja arrays
 !    allocate(rowIndex(nnz), colIndex(nnz), Avalues(nnz), b(n), x(n), ia(n+1), ja(nnz))
 
@@ -437,13 +461,27 @@ end Module solveMatrix
     !pr_act is the unknown pressure (i.e., x in Ax=b)
     !ai,aj,bc is sparse represention of coefficient matrxi (sparese of A in Ax=b)
     !ai = row index, aj=col index, bc = values 
-    call DSDBCG (nnode_act,rhs,pr_act,nnz,ai,aj,bc,ISYM,ITOL, &  !MAIN SOLVER
-        TOL,ITMAX, ITER, ERR, IERR, IUNIT, RWORK, LENW, IWORK, LENIW)
-    IF(IERR.EQ.0)THEN
-        WRITE(*  ,'(A45)')," solverReturnFlag: IERR = 0 => All went well."
-    else
-        WRITE(*  ,'(A45)')," solverReturnFlag: IERR /= 0 => Not Succeed!!"
-    ENDIF
+    !call DSDBCG (nnode_act,rhs,pr_act,nnz,ai,aj,bc,ISYM,ITOL, &  !MAIN SOLVER
+    !    TOL,ITMAX, ITER, ERR, IERR, IUNIT, RWORK, LENW, IWORK, LENIW)
+    !IF(IERR.EQ.0)THEN
+    !    WRITE(*  ,'(A45)')," solverReturnFlag: IERR = 0 => All went well."
+    !else
+    !    WRITE(*  ,'(A45)')," solverReturnFlag: IERR /= 0 => Not Succeed!!"
+    !ENDIF
+    
+
+    
+    
+    ! solve using cpu
+    if(solverLibrary.eq.1)THEN
+        returnValue = ses_solve_pressure_cpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, iterationCount, precision, useOpenMp, numOfThreads)
+    endif
+    
+    ! solve using gpu
+    if(solverLibrary.eq.2 .or. solverLibrary.eq.3)THEN
+        returnValue = ses_solve_pressure_gpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, solverLibrary, iterationCount, precision, platform , device)
+    endif
+    
     
   ! Wait for user input before exiting
     write(*,*) "Press Enter to exit"
