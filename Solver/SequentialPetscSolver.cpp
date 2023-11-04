@@ -55,7 +55,23 @@ namespace ses {
 		PetscPrintf(PETSC_COMM_WORLD, "Solved With %d Iterations \n", its);
 		this->ksp = ksp;
 	}
-
+	// call below function always before solve function
+	template<class mat_T, class vec_T>
+	void SequentialPetscSolver<mat_T, vec_T>::SetOptions(PetscBackend backend, int platform, int device, int num_threads) {
+		if (backend == PetscBackend::OPENMP) {
+			PetscOptionsSetValue(NULL, "-mat_type", "aijviennacl");
+			PetscOptionsSetValue(NULL, "-vec_type", "viennacl");
+			PetscOptionsSetValue(NULL, "-viennacl_backend", "openmp");
+			PetscOptionsSetValue(NULL, "-omp_num_threads", std::to_string(num_threads).c_str());
+		}
+		if (backend == PetscBackend::OPENCL) {
+			PetscOptionsSetValue(NULL, "-mat_type", "aijviennacl");
+			PetscOptionsSetValue(NULL, "-vec_type", "viennacl");
+			PetscOptionsSetValue(NULL, "-viennacl_backend", "opencl");
+			PetscOptionsSetValue(NULL, "-viennacl_opencl_device", std::to_string(device).c_str());
+			PetscOptionsSetValue(NULL, "-viennacl_opencl_platform", std::to_string(platform).c_str());
+		}
+	}
 	template<typename mat_T, typename vec_T>
 	void SequentialPetscSolver<mat_T, vec_T>::Solve(vec_T b, int iteration_count, LocalType precision) {
 		PetscErrorCode ierr;

@@ -15,6 +15,7 @@ namespace ses {
 	public:
 		SequentialPetscSolver(SolverArgs args);
 		void Solve(int iteration_count = 100, LocalType precision = 1e-4) override;
+		void SetOptions(PetscBackend backend, int platform = 0, int device = 0, int num_thread = 4);
 		void Solve(vec_T b, int iteration_count = 100, LocalType precision = 1e-4);
 		void SetNewB(LocalType* b);
 		vec_T b;
