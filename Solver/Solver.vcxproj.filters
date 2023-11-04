@@ -1,105 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files\ses">
-      <UniqueIdentifier>{56e2418b-390e-43b8-81a3-d3bcfbf90668}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ses\preconditioners">
-      <UniqueIdentifier>{a81b7781-a7b7-45cb-a127-0d4cbcec6ffc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ses">
-      <UniqueIdentifier>{e480c0bb-0006-4bf0-b8f2-2595ae6d4a1b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ses\preconditioners">
-      <UniqueIdentifier>{daef4d8b-4e2c-41df-bec6-3f3804d819cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ses\Factories">
-      <UniqueIdentifier>{7cd54802-83e6-4cc5-a40f-5ce634b4c6c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ses\Factories">
-      <UniqueIdentifier>{e582bf78-76d1-4806-b259-d9855440d6a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ses\Solvers">
-      <UniqueIdentifier>{17771c2b-b531-427b-829f-b7d2eadc61f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ses\helpers">
-      <UniqueIdentifier>{11920e9f-b8b5-469f-a253-e6b15a9e6f10}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ses\helpers">
-      <UniqueIdentifier>{a9ad240c-7917-43a0-94ef-98d8258609e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ses\Solvers">
-      <UniqueIdentifier>{fbdfc1ad-2696-4c63-975d-90df73edd791}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sparse_equation_solver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IPreconditioner.h">
-      <Filter>Header Files\ses\preconditioners</Filter>
-    </ClInclude>
-    <ClInclude Include="SequentialCPUSolver.h">
-      <Filter>Header Files\ses\Solvers</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleCPUSolver.h">
-      <Filter>Header Files\ses\Solvers</Filter>
-    </ClInclude>
-    <ClInclude Include="Solver.h">
-      <Filter>Header Files\ses\Solvers</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleGPUSolver.h">
-      <Filter>Header Files\ses\Solvers</Filter>
-    </ClInclude>
-    <ClInclude Include="SequentialGPUSolver.h">
-      <Filter>Header Files\ses\Solvers</Filter>
-    </ClInclude>
-    <ClInclude Include="CPUSolver.h">
-      <Filter>Header Files\ses\Solvers</Filter>
-    </ClInclude>
-    <ClInclude Include="GPUSolver.h">
-      <Filter>Header Files\ses\Solvers</Filter>
-    </ClInclude>
-    <ClInclude Include="algorithms.h">
-      <Filter>Header Files\ses\helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="matrix_factory.h">
-      <Filter>Header Files\ses\Factories</Filter>
-    </ClInclude>
-    <ClInclude Include="vector_factory.h">
-      <Filter>Header Files\ses\Factories</Filter>
-    </ClInclude>
-    <ClInclude Include="converters.h">
-      <Filter>Header Files\ses\Factories</Filter>
-    </ClInclude>
-    <ClInclude Include="utilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utilities.h">
-      <Filter>Header Files\ses\helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="solver_factory.h">
-      <Filter>Header Files\ses\Factories</Filter>
-    </ClInclude>
-  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
@@ -107,40 +7,134 @@
     <ClCompile Include="sparse_equation_solver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="algorithm_factories.cpp">
-      <Filter>Source Files\ses\Factories</Filter>
-    </ClCompile>
-    <ClCompile Include="preconditioner_factories.cpp">
-      <Filter>Source Files\ses\Factories</Filter>
-    </ClCompile>
-    <ClCompile Include="utilities.cpp">
-      <Filter>Source Files\ses\helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="vector_factory.cpp">
-      <Filter>Source Files\ses\Factories</Filter>
-    </ClCompile>
-    <ClCompile Include="matrix_factory.cpp">
-      <Filter>Source Files\ses\Factories</Filter>
-    </ClCompile>
-    <ClCompile Include="SequentialGPUSolver.cpp">
-      <Filter>Source Files\ses\Solvers</Filter>
+    <ClCompile Include="Solver.cpp">
+      <Filter>Source Files\ses\solvers</Filter>
     </ClCompile>
     <ClCompile Include="SimpleGPUSolver.cpp">
-      <Filter>Source Files\ses\Solvers</Filter>
-    </ClCompile>
-    <ClCompile Include="Solver.cpp">
-      <Filter>Source Files\ses\Solvers</Filter>
+      <Filter>Source Files\ses\solvers</Filter>
     </ClCompile>
     <ClCompile Include="SimpleCPUSolver.cpp">
-      <Filter>Source Files\ses\Solvers</Filter>
+      <Filter>Source Files\ses\solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="SequentialGPUSolver.cpp">
+      <Filter>Source Files\ses\solvers</Filter>
     </ClCompile>
     <ClCompile Include="SequentialCPUSolver.cpp">
-      <Filter>Source Files\ses\Solvers</Filter>
+      <Filter>Source Files\ses\solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm_factories.cpp">
+      <Filter>Source Files\ses\factories</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix_factory.cpp">
+      <Filter>Source Files\ses\factories</Filter>
+    </ClCompile>
+    <ClCompile Include="preconditioner_factories.cpp">
+      <Filter>Source Files\ses\factories</Filter>
+    </ClCompile>
     <ClCompile Include="solver_factory.cpp">
-      <Filter>Source Files\ses\Factories</Filter>
+      <Filter>Source Files\ses\factories</Filter>
+    </ClCompile>
+    <ClCompile Include="vector_factory.cpp">
+      <Filter>Source Files\ses\factories</Filter>
     </ClCompile>
     <ClCompile Include="algorithms.cpp">
       <Filter>Source Files\ses\helpers</Filter>
     </ClCompile>
+    <ClCompile Include="utilities.cpp">
+      <Filter>Source Files\ses\helpers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparse_equation_solver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Header Files\ses</Filter>
+    </ClInclude>
+    <ClInclude Include="CPUSolver.h">
+      <Filter>Header Files\ses\solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUSolver.h">
+      <Filter>Header Files\ses\solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="SequentialCPUSolver.h">
+      <Filter>Header Files\ses\solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="SequentialGPUSolver.h">
+      <Filter>Header Files\ses\solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleCPUSolver.h">
+      <Filter>Header Files\ses\solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleGPUSolver.h">
+      <Filter>Header Files\ses\solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="Solver.h">
+      <Filter>Header Files\ses\solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix_factory.h">
+      <Filter>Header Files\ses\factories</Filter>
+    </ClInclude>
+    <ClInclude Include="solver_factory.h">
+      <Filter>Header Files\ses\factories</Filter>
+    </ClInclude>
+    <ClInclude Include="vector_factory.h">
+      <Filter>Header Files\ses\factories</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithms.h">
+      <Filter>Header Files\ses\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities.h">
+      <Filter>Header Files\ses\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="IPreconditioner.h">
+      <Filter>Header Files\ses\preconditioners</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{a89e2275-cb52-4077-ab06-8be964753e89}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{fc25ce43-e4fa-43d2-895b-31e9ceba687b}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files\ses">
+      <UniqueIdentifier>{90a60a32-3eba-4aea-8713-5790ca2620e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ses">
+      <UniqueIdentifier>{55619470-82dd-407d-9552-b35399335f31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ses\factories">
+      <UniqueIdentifier>{8435a13c-735c-475e-bac2-ab6d6f109985}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ses\helpers">
+      <UniqueIdentifier>{efa52d15-d9af-4dbb-b121-737adb63c929}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ses\preconditioners">
+      <UniqueIdentifier>{023c7550-3916-40b9-a651-d2ffaee386aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ses\algorithms">
+      <UniqueIdentifier>{bd1bb593-da7a-414a-a0ba-78eeee202e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ses\factories">
+      <UniqueIdentifier>{2c634d57-bbbf-4fcd-932c-6827518f4309}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ses\helpers">
+      <UniqueIdentifier>{77de20ec-3cd7-413f-8d6b-e0383ed55e8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ses\preconditioners">
+      <UniqueIdentifier>{63c50384-e7ce-40be-aa5b-55d431378734}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ses\solvers">
+      <UniqueIdentifier>{67b67746-6ecf-4419-adb5-859d9da8822c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ses\solvers">
+      <UniqueIdentifier>{1e2a7337-11b0-44dc-844f-34130414881d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
