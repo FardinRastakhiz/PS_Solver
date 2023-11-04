@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Algorithm.h"
+#include "algorithms.h"
 #include "IPreconditioner.h"
 
 #include "CPUSolver.h"
