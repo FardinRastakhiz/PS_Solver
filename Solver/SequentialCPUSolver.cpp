@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SequentialCPUSolver.h"
-#include "Algorithm.h"
+#include "algorithms.h"
 #include "IPreconditioner.h"
 #include "matrix_factory.h"
 #include "vector_factory.h"
