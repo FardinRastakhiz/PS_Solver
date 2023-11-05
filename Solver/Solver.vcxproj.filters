@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="algorithms.cpp" />
-    <ClCompile Include="algorithm_factories.cpp" />
     <ClCompile Include="matrix_factory.cpp" />
     <ClCompile Include="preconditioner_factories.cpp" />
     <ClCompile Include="SequentialPetscSolver.cpp" />
@@ -15,6 +14,7 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="utilities.cpp" />
     <ClCompile Include="vector_factory.cpp" />
+    <ClCompile Include="InitialGuessBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PetscSolver.h" />
