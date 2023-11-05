@@ -27,6 +27,7 @@
 #include "SequentialPetscSolver.h"
 #include "utilities.h"
 #include "vector_factory.h"
+#include "InitialGuessBuilder.cpp"
 
 //#include "SimplePetscSolver.h"
 //#include "SequentialViennaSolver.h"
@@ -72,6 +73,14 @@ CXDLL_API int ses_write_devices_to_file() {
 		}
 		file.close();
 	}
+	return 0;
+}
+
+CXDLL_API int ses_build_initial_guess(int numRows, int numRowsAct, double* locX, double* locY, double* locZ, double* locActX, double* locActY, double* locActZ, int* bnd, double* x) {
+	InitialGuessBuilder* builder = new InitialGuessBuilder();
+	// set any options here
+	//builder->COORDINATES_MIN_NODES = 1000;
+	builder->build_with_coordinates(numRows, numRowsAct, locX, locY, locZ, locActX, locActY, locActZ, bnd, x);
 	return 0;
 }
 

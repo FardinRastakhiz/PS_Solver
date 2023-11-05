@@ -176,7 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="algorithms.cpp" />
-    <ClCompile Include="algorithm_factories.cpp" />
+    <ClCompile Include="InitialGuessBuilder.cpp" />
     <ClCompile Include="matrix_factory.cpp" />
     <ClCompile Include="preconditioner_factories.cpp" />
     <ClCompile Include="SequentialPetscSolver.cpp" />
