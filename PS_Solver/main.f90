@@ -134,28 +134,39 @@ end Module solveMatrix
     integer :: iterationCount = -1 ! acceptable values : -1 = default , any positive integer value
     real :: precision = -1.0 ! acceptable values : -1 = default , any positive double value
     integer :: returnValue
+    
     ! c++ solvers interfaces
     interface
-        function ses_solve_pressure_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, iterationCount, precision, useOpenMp, numOfThreads) bind(C, name="ses_solve_pressure_cpu")
+        function ses_solve_pressure_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, iterationCount, precision, useOpenMp, numOfThreads) result(ok) bind(C, name="ses_solve_pressure_cpu")
             use iso_c_binding
             integer(c_int), value :: numRows, numNonzero, iterationCount, useOpenMp, numOfThreads
             integer(c_int), dimension(*) :: rowIndices, colIndices
-            real(c_double), dimension(*) :: values, b, x
+            real(c_double), dimension(*) :: values, b
+            real(c_double), dimension(*), intent(out) :: x
             real(c_double), value :: precision
-            integer(c_int) :: ses_solve_pressure_cpu
+            integer(c_int) :: ok
         end function ses_solve_pressure_cpu
     end interface
     
     interface
-        function ses_solve_pressure_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, solverLibrary, iterationCount, precision, platform , device) bind(C, name="ses_solve_pressure_gpu")
+        function ses_solve_pressure_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, solverLibrary, iterationCount, precision, platform , device) result(ok) bind(C, name="ses_solve_pressure_gpu")
             use iso_c_binding
             integer(c_int), value :: numRows, numNonzero, solverLibrary, iterationCount, platform, device
             integer(c_int), dimension(*) :: rowIndices, colIndices
-            real(c_double), dimension(*) :: values, b, x
+            real(c_double), dimension(*) :: values, b
+            real(c_double), dimension(*) , intent(out) :: x
             real(c_double), value :: precision
-            integer(c_int) :: ses_solve_pressure_gpu
+            integer(c_int) :: ok
         end function ses_solve_pressure_gpu
     end interface
+    
+    interface
+        function ses_write_devices_to_file() result(ok) bind(C, name="ses_write_devices_to_file")
+            use iso_c_binding
+            integer(c_int) :: ok
+        end function ses_write_devices_to_file
+    end interface
+    
 
     ! Allocate rowIndex, colIndex, Avalues, b, x, ia, and ja arrays
 !    allocate(rowIndex(nnz), colIndex(nnz), Avalues(nnz), b(n), x(n), ia(n+1), ja(nnz))
@@ -471,7 +482,6 @@ end Module solveMatrix
     
 
     
-    
     ! solve using cpu
     if(solverLibrary.eq.1)THEN
         returnValue = ses_solve_pressure_cpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, iterationCount, precision, useOpenMp, numOfThreads)
@@ -479,7 +489,11 @@ end Module solveMatrix
     
     ! solve using gpu
     if(solverLibrary.eq.2 .or. solverLibrary.eq.3)THEN
+        ! here first we need to take platforms and devices
+        returnValue = ses_write_devices_to_file()
+        ! choose your platform and device by index - indices start from 0
         returnValue = ses_solve_pressure_gpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, solverLibrary, iterationCount, precision, platform , device)
+        
     endif
     
     
