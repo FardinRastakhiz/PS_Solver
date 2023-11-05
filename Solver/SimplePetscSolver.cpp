@@ -60,6 +60,8 @@ namespace ses {
 		auto start = high_resolution_clock::now();
 		ierr = KSPCreate(PETSC_COMM_WORLD, &ksp);
 		ierr = KSPSetType(ksp, GetKSPType(this->algorithm));
+		//for inital guess
+		KSPSetInitialGuessNonzero(ksp, PETSC_TRUE);
 		ierr = KSPSetOperators(ksp, this->A, this->A);
 		ierr = KSPSetFromOptions(ksp);
 		ierr = KSPSolve(ksp, this->b, this->x);
