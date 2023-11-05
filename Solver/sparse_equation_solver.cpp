@@ -76,9 +76,11 @@ CXDLL_API int ses_write_devices_to_file() {
 	return 0;
 }
 
-CXDLL_API int ses_build_initial_guess(int numRows, int numRowsAct, double** loc, double** locAct, int* bnd, double* x) {
+CXDLL_API int ses_build_initial_guess(int numRows, int numRowsAct, double* locX, double* locY, double* locZ, double* locActX, double* locActY, double* locActZ, int* bnd, double* x) {
 	InitialGuessBuilder* builder = new InitialGuessBuilder();
-	builder->build_with_coordinates(numRows, numRowsAct, loc[0], loc[1], loc[2], locAct[0], locAct[1], locAct[2], bnd, x);
+	// set any options here
+	//builder->COORDINATES_MIN_NODES = 1000;
+	builder->build_with_coordinates(numRows, numRowsAct, locX, locY, locZ, locActX, locActY, locActZ, bnd, x);
 	return 0;
 }
 
