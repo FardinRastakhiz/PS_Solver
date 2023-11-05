@@ -137,13 +137,13 @@ end Module solveMatrix
     
     ! c++ solvers interfaces
     interface
-        function ses_build_initial_guess(numRows, numRowsAct, loc, locAct, bnd, x) result(ok) bind(C, name="ses_build_initial_guess")
+        function ses_build_initial_guess(numRows, numRowsAct, locX , locY , locZ, locActX , locActY , locActZ, bnd, x) result(ok) bind(C, name="ses_build_initial_guess")
             use iso_c_binding
             integer(c_int) :: ok
             integer(c_int), value :: numRows , numRowsAct
             integer(c_int), dimension(*) :: bnd
-            real(c_double), dimension(:,:) :: loc, locAct
-            real(c_double), dimension(*), intent(out) :: x
+            doubleprecision, dimension(*) :: locX , locY , locZ , locActX , locActY , locActZ
+            doubleprecision, dimension(*), intent(out) :: x
         end function ses_build_initial_guess
     end interface
     interface
@@ -491,8 +491,8 @@ end Module solveMatrix
     !ENDIF
     
     ! build inital guess for x
-    returnValue = ses_build_initial_guess(nnode,nnode_act, pore_loc , pore_loc_act, poreBnd , pr_act)
-    print* , x(2)
+    returnValue = ses_build_initial_guess(nnode,nnode_act, pore_loc(1,:) , pore_loc(2,:) , pore_loc(3,:) , pore_loc_act(1,:) , pore_loc_act(2,:) , pore_loc_act(3,:), poreBnd , pr_act)
+    print* , pr_act(2)
     ! solve using cpu
     if(solverLibrary.eq.1)THEN
         returnValue = ses_solve_pressure_cpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, iterationCount, precision, useOpenMp, numOfThreads)
