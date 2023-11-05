@@ -51,6 +51,29 @@ enum TargetLibrary {
 } target_library;
 int default_iteration_count = 1000;
 int default_precision = 0.1;
+const std::string devicesFilePath = "devices.txt";
+
+CXDLL_API int ses_write_devices_to_file() {
+	std::ofstream file(devicesFilePath);
+	if (file.is_open())
+	{
+		int max_len = viennacl::ocl::get_platforms().size();
+		for (int i = 0; i < max_len; i++) {
+			try {
+				std::vector<viennacl::ocl::device> devices = viennacl::ocl::get_platforms()[i].devices();
+				file << viennacl::ocl::get_platforms()[i].info() << "-----" << devices.size() << endl;
+				for (int j = 0; j < devices.size(); j++) {
+					file << devices[j].name() << endl;
+				}
+			}
+			catch(exception){
+				//do nothing. must continue
+			}
+		}
+		file.close();
+	}
+	return 0;
+}
 
 CXDLL_API int ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, int* col_indices, double * values, double* b, double* x, int target_lib, int iteration_count, double precision, int platform , int device) {
 	target_library = (TargetLibrary)target_lib;
