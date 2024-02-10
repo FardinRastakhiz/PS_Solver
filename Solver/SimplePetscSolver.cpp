@@ -38,6 +38,7 @@ namespace ses {
 		create_petsc_vector(args.num_rows, this->u);
 		create_petsc_vector(args.num_rows, this->x);
 		fill_petsc_vector(args.num_rows, this->s_b, this->b);
+		fill_petsc_vector(args.num_rows, this->s_x, this->x);
 		this->algorithm = args.algorithm;
 	}
 	template<class mat_T, class vec_T>
@@ -45,12 +46,25 @@ namespace ses {
 
 		PetscErrorCode ierr;
 		PetscMPIInt    size, rank;
-		if (iteration_count != -1)
+		if (iteration_count > 0) {
+			PetscPrintf(PETSC_COMM_WORLD, "inited \n");
 			PetscOptionsSetValue(NULL, "-ksp_max_it", std::to_string(iteration_count).c_str());
-		if (precision != -1.0)
+		}
+		if (precision > 0) {
+			PetscPrintf(PETSC_COMM_WORLD, "precision \n");
 			PetscOptionsSetValue(NULL, "-ksp_atol", std::to_string(precision).c_str());
+		}
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
+		PetscViewer viewer;
+		PetscViewerASCIIOpen(PETSC_COMM_SELF, "petscb.txt", &viewer); // open an ASCII file for writing
+		VecView(this->b, viewer); // save the vector to the file
+		PetscViewerDestroy(&viewer); // close the file
+		//PetscViewer viewer;
+		//PetscViewerASCIIOpen(PETSC_COMM_SELF, "petscA.txt", &viewer); // open an ASCII file for writing
+		//MatView(this->A, viewer); // save the vector to the file
+		//PetscViewerDestroy(&viewer); // close the file
 		PetscPrintf(PETSC_COMM_WORLD, "PETSC Initialized \n");
+		//PetscPrintf(PETSC_COMM_WORLD, "this is initialized x1000  %f\n", this->s_x[1000]);
 
 		KSP            ksp;           /* linear solver context */
 		PetscReal      norm;          /* norm of solution error */
@@ -59,9 +73,11 @@ namespace ses {
 		
 		auto start = high_resolution_clock::now();
 		ierr = KSPCreate(PETSC_COMM_WORLD, &ksp);
+		KSPGetPC(ksp, &pc);
+		PCSetType(pc, PCBJACOBI);
 		ierr = KSPSetType(ksp, GetKSPType(this->algorithm));
 		//for inital guess
-		KSPSetInitialGuessNonzero(ksp, PETSC_TRUE);
+		//KSPSetInitialGuessNonzero(ksp, PETSC_TRUE);
 		ierr = KSPSetOperators(ksp, this->A, this->A);
 		ierr = KSPSetFromOptions(ksp);
 		ierr = KSPSolve(ksp, this->b, this->x);
@@ -74,6 +90,7 @@ namespace ses {
 		ierr = MatMult(this->A, this->x, this->y); // y = A*x
 		ierr = VecAXPY(this->y, -1.0, this->b); // y = y - b
 		ierr = VecNorm(this->y, NORM_2, &norm); // Calculate the 2-norm of y
+
 		PetscPrintf(PETSC_COMM_WORLD, "norm of error %g\n", norm);
 		KSPDestroy(&ksp);
 
@@ -99,7 +116,11 @@ namespace ses {
 	LocalType* SimplePetscSolver<mat_T, vec_T>::GetResult() {
 		PetscScalar* a;
 		VecGetArray(this->x, &a);
-		return (LocalType*)a;
+		LocalType* res = (LocalType*)malloc(sizeof(LocalType) * this->args.num_rows);
+		for (int i = 0; i < this->args.num_rows; i++) {
+			res[i] = (LocalType)a[i];
+		}
+		return res;
 	}
 
 	template<class mat_T, class vec_T>
