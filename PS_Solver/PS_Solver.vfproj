@@ -16,7 +16,7 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Debug|x64">
 				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" InlineFunctionExpansion="expandAnySuitable" AdditionalIncludeDirectories="C:\Users\Raoof101\Dropbox\PoreFlow\Working_Codes\poreflow_win11_vs2022\solution_and_codes\src\src_slatec\" DebugParameter="debugParameterAll" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
-				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="$(SolutionDir)PS_Solver\src_slatec\;$(SolutionDir)PS_Solver\$(Platform)\$(Configuration)\" IgnoreDefaultLibraryNames="LIBCMT" GenerateDebugInformation="true" SubSystem="subSystemConsole" AdditionalDependencies="Solver.lib"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="$(SolutionDir)PS_Solver\src_slatec\;$(SolutionDir)PS_Solver\$(Platform)\$(Configuration)\" IgnoreDefaultLibraryNames="LIBCMT" GenerateDebugInformation="true" SubSystem="subSystemConsole" HeapReserveSize="999999999" HeapCommitSize="999999999" StackReserveSize="999999999" StackCommitSize="999999999" AdditionalDependencies="Solver.lib"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
 				<Tool Name="VFCustomBuildTool"/>
@@ -36,7 +36,7 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Release|x64">
 				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" AdditionalIncludeDirectories="C:\Users\Raoof101\Dropbox\PoreFlow\Fortran_examples\PS_Solver_omid\PS_Solver\PS_Solver\src_slatec\" OpenMP="OpenMPParallelCode" RuntimeLibrary="rtMultiThreadedDLL"/>
-				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="$(SolutionDir)PS_Solver\src_slatec;$(SolutionDir)PS_Solver\$(Platform)\$(Configuration)" SubSystem="subSystemConsole" AdditionalDependencies="Solver.lib"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="$(SolutionDir)PS_Solver\src_slatec;$(SolutionDir)PS_Solver\$(Platform)\$(Configuration)" SubSystem="subSystemConsole" HeapReserveSize="999999999" HeapCommitSize="999999999" StackReserveSize="999999999" StackCommitSize="999999999" AdditionalDependencies="Solver.lib"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
 				<Tool Name="VFCustomBuildTool"/>

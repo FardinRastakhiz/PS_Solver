@@ -1,6 +1,7 @@
 
 #include "pch.h"
 #include "utilities.h"
+using namespace std;
 namespace ses {
 
 
@@ -18,7 +19,6 @@ namespace ses {
 				}
 				
 			}
-			std::cout << mean / num << std::endl;
 			return mean / num;
 		}
 		LocalType calc_variance_on_axis(int numRows, LocalType* pores_in_axis, int* boundaries , int bnd_type) {
@@ -38,8 +38,9 @@ namespace ses {
 		void coordinates_fill_vector_linear(int numRowsAct, LocalType* x, LocalType* locActAxis, LocalType from, LocalType to) {
 			LocalType quantum = (to - from) / (LocalType)numRowsAct;
 			LocalType accumulation = 0;
-			for (int i = 0; i < numRowsAct; i++) {
+			for (int i = numRowsAct - 1; i >= 0 ; i--) {
 				x[i] = accumulation;
+				//x[i] = 0.0;
 				accumulation += quantum;
 			}
 		}
@@ -47,8 +48,8 @@ namespace ses {
 		//defining options - options are public. feel free to change them
 		LocalType COORDINATES_LINEAR_FROM = 0; // pressure starts from 0
 		LocalType COORDINATES_LINEAR_TO = 1; // pressure goes to 1
-		LocalType COORDINATES_INLET_VARIANCE_TRESHOLD = 100; // maximum variance - if inlet nodes variance on any axis break this limit, that axis won't be selected 
-		LocalType COORDINATES_OUTLET_VARIANVE_TRESHOLD = 100; // maximum variance - if outlet nodes variance on any axis break this limit, that axis won't be selected 
+		LocalType COORDINATES_INLET_VARIANCE_TRESHOLD = 50000; // maximum variance - if inlet nodes variance on any axis break this limit, that axis won't be selected 
+		LocalType COORDINATES_OUTLET_VARIANCE_TRESHOLD = 50000; // maximum variance - if outlet nodes variance on any axis break this limit, that axis won't be selected 
 		LocalType COORDINATES_MIN_NODES = 500; // minimum nodes - if nodes are less than this value, initial guess will be canceled
 		// define other initialization algorithms here - give your all declerations a prifix
 		void build_with_coordinates(int numRows,int numRowsAct, LocalType* locX, LocalType* locY, LocalType* locZ, LocalType* locActX, LocalType* locActY, LocalType* locActZ, int* bnd, LocalType* x) {
@@ -58,31 +59,39 @@ namespace ses {
 			// calculating variance on x and y and z axis
 			LocalType x_inlets_variance = this->calc_variance_on_axis(numRows, locX, bnd, 1); // 1 is for inlets
 			LocalType x_outlets_variance = this->calc_variance_on_axis(numRows, locX, bnd, 2); // 2 is for outlets
-			std::cout << "here we go : " << x_inlets_variance;
-			std::cout << "for outlets : " << x_outlets_variance;
-			if (x_inlets_variance < this->COORDINATES_INLET_VARIANCE_TRESHOLD && x_outlets_variance < this->COORDINATES_OUTLET_VARIANVE_TRESHOLD) {
+			std::cout << "here we go : " << (int)x_inlets_variance;
+			std::cout << "for outlets : " << (int)x_outlets_variance;
+			if (x_inlets_variance < this->COORDINATES_INLET_VARIANCE_TRESHOLD && x_outlets_variance < this->COORDINATES_OUTLET_VARIANCE_TRESHOLD) {
 				//means x is selected as wanted axis
+				cout << "x is selected" << endl;
 				this->coordinates_fill_vector_linear(numRowsAct, x, locActX, this->COORDINATES_LINEAR_FROM, this->COORDINATES_LINEAR_TO);
 				return;
 			}
 			LocalType y_inlets_variance = this->calc_variance_on_axis(numRows, locY, bnd, 1); // 1 is for inlets
 			LocalType y_outlets_variance = this->calc_variance_on_axis(numRows, locY, bnd, 2); // 2 is for outlets
-			std::cout << "here we go : " << y_inlets_variance;
-			std::cout << "for outlets : " << y_outlets_variance;
-			if (y_inlets_variance < this->COORDINATES_INLET_VARIANCE_TRESHOLD && y_outlets_variance < this->COORDINATES_OUTLET_VARIANVE_TRESHOLD) {
+			std::cout << "here we go : " << (int)y_inlets_variance;
+			std::cout << "for outlets : " << (int)y_outlets_variance;
+			if (y_inlets_variance < this->COORDINATES_INLET_VARIANCE_TRESHOLD && y_outlets_variance < this->COORDINATES_OUTLET_VARIANCE_TRESHOLD) {
 				//means y is selected as wanted axis
+				cout << "y is selected" << endl;
 				this->coordinates_fill_vector_linear(numRowsAct, x, locActY, this->COORDINATES_LINEAR_FROM, this->COORDINATES_LINEAR_TO);
 				return;
 			}
 			LocalType z_inlets_variance = this->calc_variance_on_axis(numRows, locZ, bnd, 1); // 1 is for inlets
 			LocalType z_outlets_variance = this->calc_variance_on_axis(numRows, locZ, bnd, 2); // 2 is for outlets
-			std::cout << "here we go : " << z_inlets_variance;
-			std::cout << "for outlets : " << z_outlets_variance;
-			if (z_inlets_variance < this->COORDINATES_INLET_VARIANCE_TRESHOLD && z_outlets_variance < this->COORDINATES_OUTLET_VARIANVE_TRESHOLD) {
+			std::cout << "here we go : " << (int)z_inlets_variance;
+			std::cout << "for outlets : " << (int)z_outlets_variance;
+			if (z_inlets_variance < this->COORDINATES_INLET_VARIANCE_TRESHOLD && z_outlets_variance < this->COORDINATES_OUTLET_VARIANCE_TRESHOLD) {
 				//means z is selected as wanted axis
+
+				cout << "z is selected" << endl;
 				this->coordinates_fill_vector_linear(numRowsAct, x, locActZ, this->COORDINATES_LINEAR_FROM, this->COORDINATES_LINEAR_TO);
 				return;
 			}
+			//cout << "here is the initialized x last 100 rows" << endl;
+			//for (int i = numRowsAct - 100; i < numRowsAct; i++) {
+			//	cout << x[i] << endl;
+			//}
 			
 		}
 
