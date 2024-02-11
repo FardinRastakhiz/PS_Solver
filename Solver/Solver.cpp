@@ -7,7 +7,7 @@
 namespace ses {
 	SolverArgs::SolverArgs(){}
 	SolverArgs::SolverArgs(int num_rows, int num_cols, int nnz, int* row_indices,
-		int* col_indices, double* values, double* b, Algorithm algorithm,
+		int* col_indices, double* values, double* b,double* x, Algorithm algorithm,
 		IPreconditioner preconditioner) {
 		this->num_rows = num_rows;
 		this->num_cols = num_cols;
@@ -44,12 +44,12 @@ namespace ses {
 	void Solver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
 		s_values = cast_to_local(args.values, args.nnz);
 		s_b = cast_to_local(args.b, args.num_rows);
-		s_x = cast_to_local(args.x, args.num_cols);
+		s_x = cast_to_local(args.x, args.num_rows);
 
-		std::cout << s_values[0] << std::endl;
-		std::cout << s_b[1] << std::endl;
 		//std::cout << s_values[0] << std::endl;
-		//std::cout << s_b[10099] << std::endl;
+		//std::cout << s_b[1] << std::endl;
+		//std::cout << s_values[0] << std::endl;
+
 	}
 
 

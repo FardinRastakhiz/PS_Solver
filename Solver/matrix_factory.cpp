@@ -83,7 +83,11 @@ namespace ses {
 		MatSetUp(matrix);
 
 		// Set matrix values
-		for (int i = 0; i < nnz; i++) { MatSetValue(matrix, rows[i] - 1, cols[i] - 1, values[i], INSERT_VALUES); }
+		for (int i = 0; i < nnz; i++) { 
+			MatSetValue(matrix, rows[i] - 1, cols[i] - 1, values[i], INSERT_VALUES); 
+			MatSetValue(matrix, cols[i] - 1, rows[i] - 1, values[i], INSERT_VALUES);
+		}
+		MatSetOption(matrix, MAT_SYMMETRIC, PETSC_TRUE);
 		MatAssemblyBegin(matrix, MAT_FINAL_ASSEMBLY);
 		MatAssemblyEnd(matrix, MAT_FINAL_ASSEMBLY);
 	}
