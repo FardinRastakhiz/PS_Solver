@@ -13,7 +13,7 @@ namespace ses {
 		IPreconditioner preconditioner;
 		SolverArgs();
 		SolverArgs(int num_rows, int num_cols, int nnz, int* row_indices,
-			int* col_indices, double* values, double* b, Algorithm algorithm,
+			int* col_indices, double* values, double* b,double* x, Algorithm algorithm,
 			IPreconditioner preconditioner = DummyPreconditioner());
 	};
 

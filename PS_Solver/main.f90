@@ -108,7 +108,6 @@ end Module solveMatrix
     doubleprecision,dimension(:,:),allocatable:: pore_loc_act
     integer :: count, new_count, nnode_act, ntube_act
     logical :: include_connection
-   
     !solving pressure
     integer :: nnz
     integer,dimension(:),allocatable:: ai, aj
@@ -129,10 +128,10 @@ end Module solveMatrix
     integer :: solverLibrary = 2; ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
     integer :: useOpenMp = 1; ! acceptable values : 0 = dont use openMP , 1 = use openMP
     integer :: numOfThreads = 8; ! acceptable values : any positive integer value
-    integer :: platform = 2 ! acceptable values should be extracted from ses_get_devices function
+    integer :: platform = 0 ! acceptable values should be extracted from ses_get_devices function
     integer :: device = 0 ! acceptable values should be extracted from ses_get_devices function
     integer :: iterationCount = -1 ! acceptable values : -1 = default , any positive integer value
-    real :: precision = -1.0 ! acceptable values : -1 = default , any positive double value
+    real :: precision = -1 ! acceptable values : -1 = default , any positive double value
     integer :: returnValue
     
     ! c++ solvers interfaces
@@ -481,18 +480,27 @@ end Module solveMatrix
     ! nnode_act is number of active nodes (i.e., n in standard Ax=b)
     !pr_act is the unknown pressure (i.e., x in Ax=b)
     !ai,aj,bc is sparse represention of coefficient matrxi (sparese of A in Ax=b)
-    !ai = row index, aj=col index, bc = values 
-    !call DSDBCG (nnode_act,rhs,pr_act,nnz,ai,aj,bc,ISYM,ITOL, &  !MAIN SOLVER
-    !    TOL,ITMAX, ITER, ERR, IERR, IUNIT, RWORK, LENW, IWORK, LENIW)
-    !IF(IERR.EQ.0)THEN
-    !    WRITE(*  ,'(A45)')," solverReturnFlag: IERR = 0 => All went well."
-    !else
-    !    WRITE(*  ,'(A45)')," solverReturnFlag: IERR /= 0 => Not Succeed!!"
-    !ENDIF
+    !ai = row index, aj=col index, bc = values  
+    filename = 'Slatec_b'
+    !!!!call DSDBCG (nnode_act,rhs,pr_act,nnz,ai,aj,bc,ISYM,ITOL, &  !MAIN SOLVER
+    !!!!    TOL,ITMAX, ITER, ERR, IERR, IUNIT, RWORK, LENW, IWORK, LENIW)
+    !!!!IF(IERR.EQ.0)THEN
+    !!!!    WRITE(*  ,'(A45)')," solverReturnFlag: IERR = 0 => All went well."
+    !!!!else
+    !!!!    WRITE(*  ,'(A45)')," solverReturnFlag: IERR /= 0 => Not Succeed!!"
+    !!!!ENDIF
+        ! Open the file for writing
+    open(unit=10, file=filename, status="replace")
     
+    ! Write each element of the vector to the file with a line break
+    do i = 1, nnode_act
+      write(10,*) rhs(i)
+    end do
+    
+    ! Close the file
+    close(unit=10)
     ! build inital guess for x
     !returnValue = ses_build_initial_guess(nnode,nnode_act, pore_loc(1,:) , pore_loc(2,:) , pore_loc(3,:) , pore_loc_act(1,:) , pore_loc_act(2,:) , pore_loc_act(3,:), poreBnd , pr_act)
-    print* , pr_act(2)
     ! solve using cpu
     if(solverLibrary.eq.1)THEN
         returnValue = ses_solve_pressure_cpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, iterationCount, precision, useOpenMp, numOfThreads)

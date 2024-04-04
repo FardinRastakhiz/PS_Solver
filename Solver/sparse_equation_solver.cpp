@@ -77,6 +77,7 @@ CXDLL_API int ses_write_devices_to_file() {
 }
 
 CXDLL_API int ses_build_initial_guess(int numRows, int numRowsAct, double* locX, double* locY, double* locZ, double* locActX, double* locActY, double* locActZ, int* bnd, double* x) {
+	std::cout << "hello world";
 	InitialGuessBuilder* builder = new InitialGuessBuilder();
 	// set any options here
 	//builder->COORDINATES_MIN_NODES = 1000;
@@ -87,7 +88,7 @@ CXDLL_API int ses_build_initial_guess(int numRows, int numRowsAct, double* locX,
 CXDLL_API int ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, int* col_indices, double * values, double* b, double* x, int target_lib, int iteration_count, double precision, int platform , int device) {
 	target_library = (TargetLibrary)target_lib;
 	if (target_library == TargetLibrary::VIENNA_CL_GPU) {
-		SolverArgs args(num_rows, num_rows, nnz, row_indices, col_indices, values, b, GMRES);
+		SolverArgs args(num_rows, num_rows, nnz, row_indices, col_indices, values, b , x, GMRES);
 
 		// create solvers and solve the matrix
 		solver = std::make_unique<SimpleViennaSolver<VI_SELL_MAT, VI_VEC>>(args);
@@ -100,10 +101,10 @@ CXDLL_API int ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, in
 		//std::cout << x1[0] << std::endl;
 		//std::cout << x1[1] << std::endl;
 		save_vector_pointer(x, num_rows, "output_x.txt");
-		save_vector_pointer(new_b, num_rows, "output_b.txt");
+		
 	}
 	if (target_library == TargetLibrary::PETSC_GPU) {
-		SolverArgs args(num_rows, num_rows, nnz, row_indices, col_indices, values, b, GMRES);
+		SolverArgs args(num_rows, num_rows, nnz, row_indices, col_indices, values, b , x, GMRES);
 
 		// create solvers and solve the matrix
 		solver = std::make_unique<SimplePetscSolver<PETSC_MAT, PETSC_VEC >>(args);
@@ -113,7 +114,6 @@ CXDLL_API int ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, in
 		// save x and b
 		if (SimplePetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimplePetscSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
 		{
-			// TODO : should get platform and device as parameter
 			
 			c->SetOptions(PetscBackend::OPENCL, platform, device, iteration_count, precision);
 			c->Initialize();
@@ -129,28 +129,33 @@ CXDLL_API int ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, in
 
 
 CXDLL_API int ses_solve_pressure_cpu(int num_rows, int nnz, int* row_indices, int* col_indices, double* values, double* b, double* x,int iteration_count, double precision,int use_open_mp ,int num_threads) {
+	//cout << "here is the initialized x last 100 rows" << endl;
 
-	SolverArgs args(num_rows, num_rows, nnz, row_indices, col_indices, values, b, GMRES);
+	SolverArgs args(num_rows, num_rows, nnz, row_indices, col_indices, values, b , x, CG);
 
 	// create solvers and solve the matrix
 	solver = std::make_unique<SimplePetscSolver<PETSC_MAT,PETSC_VEC >>(args);
 	
-
-	save_vector_pointer(x, num_rows, "output_x.txt");
-	// save x and b
 	if (SimplePetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimplePetscSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
 	{
 		c->SetOptions(use_open_mp == 0 ? PetscBackend::NORMAL : PetscBackend::OPENMP, 0 , 0 , num_threads, iteration_count, precision);
 		c->Initialize();
 		c->Solve(iteration_count, precision);
 		// Get the result
-		x = ses::cast_to<double>(c->GetResult(), num_rows);
+		//x = ses::cast_to<double>(c->GetResult(), num_rows);
+		save_vector_pointer(c->GetResult(), num_rows, "output_x.txt");
+		c->PrintX();
+		c->PrintResultB();
 		c->Finalize();
 	}
+	
+	//for (int i = num_rows - 2000; i < num_rows; i++) {
+	//	cout << x[i] << endl;
+	//}
 	return 0;
 }
 CXDLL_API int ses_solve_begin_density_cpu(int num_rows, int num_non_zero, int* row_indices, int* col_indices, double* values, double* b, double* x , int iteration_count, double precision, int use_open_mp, int num_threads) {
-	SolverArgs args(num_rows, num_rows, num_non_zero, row_indices, col_indices, values, b, GMRES);
+	SolverArgs args(num_rows, num_rows, num_non_zero, row_indices, col_indices, values, b, x, GMRES);
 
 	// create solvers and solve the matrix
 	solver = std::make_unique<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >>(args);
@@ -175,14 +180,14 @@ CXDLL_API int ses_solve_begin_density_gpu(
 	int* row_indices, int* col_indices, double* values, double* b, double* x,int target_lib, int iteration_count , int precision , int platform , int device){
 	target_library = (TargetLibrary)target_lib;
 	if (target_library == VIENNA_CL_GPU) {
-		SolverArgs args(num_rows, num_rows, num_non_zero, row_indices, col_indices, values, b, GMRES);
+		SolverArgs args(num_rows, num_rows, num_non_zero, row_indices, col_indices, values, b , x, GMRES);
 
 		solver = std::make_unique<SequentialViennaSolver<VI_SELL_MAT, VI_VEC>>(args);
 		solver->Solve(iteration_count == -1 ? default_iteration_count : iteration_count, precision == -1 ? default_precision : precision);
 		x = solver->GetResult();
 	}
 	if (target_library == PETSC_GPU) {
-		SolverArgs args(num_rows, num_rows, num_non_zero, row_indices, col_indices, values, b, GMRES);
+		SolverArgs args(num_rows, num_rows, num_non_zero, row_indices, col_indices, values, b , x, GMRES);
 
 		// create solvers and solve the matrix
 		solver = std::make_unique<SimplePetscSolver<PETSC_MAT, PETSC_VEC >>(args);

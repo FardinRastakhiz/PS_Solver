@@ -38,12 +38,14 @@ namespace ses {
 		PetscErrorCode ierr;
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
 		PetscPrintf(PETSC_COMM_WORLD, "PETSC Initialized \n");
+		PetscPrintf(PETSC_COMM_WORLD, "error code \n", ierr);
 		create_matrix(this->args.num_rows, this->args.num_cols, this->args.nnz, this->args.row_indices, this->args.col_indices, this->s_values, this->A);
 		create_petsc_vector(this->args.num_rows, this->b);
 		create_petsc_vector(this->args.num_rows, this->y);
 		create_petsc_vector(this->args.num_rows, this->u);
 		create_petsc_vector(this->args.num_rows, this->x);
 		fill_petsc_vector(this->args.num_rows, this->s_b, this->b);
+		fill_petsc_vector(this->args.num_rows, this->s_x, this->x);
 		this->algorithm = this->args.algorithm;
 	}
 	template<class mat_T, class vec_T>
@@ -57,6 +59,8 @@ namespace ses {
 		
 		auto start = high_resolution_clock::now();
 		ierr = KSPCreate(PETSC_COMM_WORLD, &ksp);
+		//KSPGetPC(ksp, &pc);
+		//PCSetType(pc, PCBJACOBI);
 		ierr = KSPSetType(ksp, GetKSPType(this->algorithm));
 		//for inital guess
 		//KSPSetInitialGuessNonzero(ksp, PETSC_TRUE);
@@ -72,6 +76,7 @@ namespace ses {
 		ierr = MatMult(this->A, this->x, this->y); // y = A*x
 		ierr = VecAXPY(this->y, -1.0, this->b); // y = y - b
 		ierr = VecNorm(this->y, NORM_2, &norm); // Calculate the 2-norm of y
+
 		PetscPrintf(PETSC_COMM_WORLD, "norm of error %g\n", norm);
 		KSPDestroy(&ksp);
 
@@ -93,7 +98,7 @@ namespace ses {
 			PetscOptionsSetValue(NULL, "-viennacl_opencl_platform", std::to_string(platform).c_str());
 		}
 		//setting the preconditioner
-		//PetscOptionsSetValue(NULL, "-pc_type", "jacobi");
+		PetscOptionsSetValue(NULL, "-pc_type", "jacobi");
 		if (iteration_count != -1)
 			PetscOptionsSetValue(NULL, "-ksp_max_it", std::to_string(iteration_count).c_str());
 		if (precision != -1.0)
@@ -103,7 +108,11 @@ namespace ses {
 	LocalType* SimplePetscSolver<mat_T, vec_T>::GetResult() {
 		PetscScalar* a;
 		VecGetArray(this->x, &a);
-		return (LocalType*)a;
+		LocalType* res = (LocalType*)malloc(sizeof(LocalType) * this->args.num_rows);
+		for (int i = 0; i < this->args.num_rows; i++) {
+			res[i] = (LocalType)a[i];
+		}
+		return res;
 	}
 
 	template<class mat_T, class vec_T>
