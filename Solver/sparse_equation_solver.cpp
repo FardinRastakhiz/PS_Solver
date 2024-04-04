@@ -115,7 +115,8 @@ CXDLL_API int ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, in
 		{
 			// TODO : should get platform and device as parameter
 			
-			c->SetOptions(PetscBackend::OPENCL, platform, device);
+			c->SetOptions(PetscBackend::OPENCL, platform, device, iteration_count, precision);
+			c->Initialize();
 			c->Solve(iteration_count, precision);
 			// Get the result
 			x = ses::cast_to<double>(c->GetResult(), num_rows);
@@ -139,7 +140,8 @@ CXDLL_API int ses_solve_pressure_cpu(int num_rows, int nnz, int* row_indices, in
 	// save x and b
 	if (SimplePetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimplePetscSolver<PETSC_MAT, PETSC_VEC >*>(solver.get()))
 	{
-		c->SetOptions(use_open_mp == 0 ? PetscBackend::NORMAL : PetscBackend::OPENMP, 0 , 0 , num_threads );
+		c->SetOptions(use_open_mp == 0 ? PetscBackend::NORMAL : PetscBackend::OPENMP, 0 , 0 , num_threads, iteration_count, precision);
+		c->Initialize();
 		c->Solve(iteration_count, precision);
 		// Get the result
 		x = ses::cast_to<double>(c->GetResult(), num_rows);

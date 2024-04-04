@@ -126,8 +126,8 @@ end Module solveMatrix
     
     ! c++ solvers parameters
     ! below codes can be defined somewhere else
-    integer :: solverLibrary = 1; ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
-    integer :: useOpenMp = 0; ! acceptable values : 0 = dont use openMP , 1 = use openMP
+    integer :: solverLibrary = 2; ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
+    integer :: useOpenMp = 1; ! acceptable values : 0 = dont use openMP , 1 = use openMP
     integer :: numOfThreads = 8; ! acceptable values : any positive integer value
     integer :: platform = 2 ! acceptable values should be extracted from ses_get_devices function
     integer :: device = 0 ! acceptable values should be extracted from ses_get_devices function
@@ -491,7 +491,7 @@ end Module solveMatrix
     !ENDIF
     
     ! build inital guess for x
-    returnValue = ses_build_initial_guess(nnode,nnode_act, pore_loc(1,:) , pore_loc(2,:) , pore_loc(3,:) , pore_loc_act(1,:) , pore_loc_act(2,:) , pore_loc_act(3,:), poreBnd , pr_act)
+    !returnValue = ses_build_initial_guess(nnode,nnode_act, pore_loc(1,:) , pore_loc(2,:) , pore_loc(3,:) , pore_loc_act(1,:) , pore_loc_act(2,:) , pore_loc_act(3,:), poreBnd , pr_act)
     print* , pr_act(2)
     ! solve using cpu
     if(solverLibrary.eq.1)THEN

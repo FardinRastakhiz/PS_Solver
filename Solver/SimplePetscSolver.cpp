@@ -30,38 +30,36 @@ namespace ses {
 	}
 	template<class mat_T, class vec_T>
 	void SimplePetscSolver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
+		this->args = args;
+		
+	}
+	template<class mat_T, class vec_T>
+	void SimplePetscSolver<mat_T, vec_T>::Initialize() {
 		PetscErrorCode ierr;
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
-		create_matrix(args.num_rows, args.num_cols, args.nnz, args.row_indices, args.col_indices, this->s_values, this->A);
-		create_petsc_vector(args.num_rows, this->b);
-		create_petsc_vector(args.num_rows, this->y);
-		create_petsc_vector(args.num_rows, this->u);
-		create_petsc_vector(args.num_rows, this->x);
-		fill_petsc_vector(args.num_rows, this->s_b, this->b);
-		this->algorithm = args.algorithm;
+		PetscPrintf(PETSC_COMM_WORLD, "PETSC Initialized \n");
+		create_matrix(this->args.num_rows, this->args.num_cols, this->args.nnz, this->args.row_indices, this->args.col_indices, this->s_values, this->A);
+		create_petsc_vector(this->args.num_rows, this->b);
+		create_petsc_vector(this->args.num_rows, this->y);
+		create_petsc_vector(this->args.num_rows, this->u);
+		create_petsc_vector(this->args.num_rows, this->x);
+		fill_petsc_vector(this->args.num_rows, this->s_b, this->b);
+		this->algorithm = this->args.algorithm;
 	}
 	template<class mat_T, class vec_T>
 	void SimplePetscSolver<mat_T, vec_T>::Solve(int iteration_count, LocalType precision) {
 
 		PetscErrorCode ierr;
 		PetscMPIInt    size, rank;
-		if (iteration_count != -1)
-			PetscOptionsSetValue(NULL, "-ksp_max_it", std::to_string(iteration_count).c_str());
-		if (precision != -1.0)
-			PetscOptionsSetValue(NULL, "-ksp_atol", std::to_string(precision).c_str());
-		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
-		PetscPrintf(PETSC_COMM_WORLD, "PETSC Initialized \n");
-
 		KSP            ksp;           /* linear solver context */
 		PetscReal      norm;          /* norm of solution error */
 		PC             pc;
-
 		
 		auto start = high_resolution_clock::now();
 		ierr = KSPCreate(PETSC_COMM_WORLD, &ksp);
 		ierr = KSPSetType(ksp, GetKSPType(this->algorithm));
 		//for inital guess
-		KSPSetInitialGuessNonzero(ksp, PETSC_TRUE);
+		//KSPSetInitialGuessNonzero(ksp, PETSC_TRUE);
 		ierr = KSPSetOperators(ksp, this->A, this->A);
 		ierr = KSPSetFromOptions(ksp);
 		ierr = KSPSolve(ksp, this->b, this->x);
@@ -80,7 +78,7 @@ namespace ses {
 	}
 	// call below function always before solve function
 	template<class mat_T, class vec_T>
-	void SimplePetscSolver<mat_T, vec_T>::SetOptions(PetscBackend backend, int platform, int device , int num_threads) {
+	void SimplePetscSolver<mat_T, vec_T>::SetOptions(PetscBackend backend, int platform, int device , int num_threads,int iteration_count, LocalType precision) {
 		if (backend == PetscBackend::OPENMP) {
 			PetscOptionsSetValue(NULL, "-mat_type", "aijviennacl");
 			PetscOptionsSetValue(NULL, "-vec_type", "viennacl");
@@ -94,6 +92,12 @@ namespace ses {
 			PetscOptionsSetValue(NULL, "-viennacl_opencl_device", std::to_string(device).c_str());
 			PetscOptionsSetValue(NULL, "-viennacl_opencl_platform", std::to_string(platform).c_str());
 		}
+		//setting the preconditioner
+		//PetscOptionsSetValue(NULL, "-pc_type", "jacobi");
+		if (iteration_count != -1)
+			PetscOptionsSetValue(NULL, "-ksp_max_it", std::to_string(iteration_count).c_str());
+		if (precision != -1.0)
+			PetscOptionsSetValue(NULL, "-ksp_atol", std::to_string(precision).c_str());
 	}
 	template<class mat_T, class vec_T>
 	LocalType* SimplePetscSolver<mat_T, vec_T>::GetResult() {
