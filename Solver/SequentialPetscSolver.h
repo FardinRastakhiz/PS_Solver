@@ -5,9 +5,7 @@
 
 #include "PetscSolver.h"
 
-
 namespace ses {
-
 
 	template<typename mat_T, typename vec_T>
 	class SequentialPetscSolver : public PetscSolver<mat_T, vec_T>

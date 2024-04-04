@@ -38,7 +38,7 @@ namespace ses {
 		PetscErrorCode ierr;
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
 		PetscPrintf(PETSC_COMM_WORLD, "PETSC Initialized \n");
-		PetscPrintf(PETSC_COMM_WORLD, "error code \n", ierr);
+		//PetscPrintf(PETSC_COMM_WORLD, "error code \n", ierr);
 		create_matrix(this->args.num_rows, this->args.num_cols, this->args.nnz, this->args.row_indices, this->args.col_indices, this->s_values, this->A);
 		create_petsc_vector(this->args.num_rows, this->b);
 		create_petsc_vector(this->args.num_rows, this->y);
