@@ -13,7 +13,7 @@ namespace ses {
 	public:
 		SimplePetscSolver(SolverArgs args);
 		void Initialize();
-		void Solve(int iteration_count = 100, LocalType precision = 1e-4);
+		void Solve(int iteration_count = 100, LocalType precision = 1e-4) override;
 		void SetOptions(PetscBackend backend, int platform = 0, int device = 0 , int num_thread = 4, int iteration_count = 100, LocalType precision = 1e-4);
 		void SetLocalTypes(SolverArgs args) override;
 		void PrintX();

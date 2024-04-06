@@ -125,7 +125,7 @@ end Module solveMatrix
     
     ! c++ solvers parameters
     ! below codes can be defined somewhere else
-    integer :: solverLibrary = 1; ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
+    integer :: solverLibrary = 2; ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
     integer :: useOpenMp = 1; ! acceptable values : 0 = dont use openMP , 1 = use openMP
     integer :: numOfThreads = 8; ! acceptable values : any positive integer value
     integer :: platform = 2 ! acceptable values should be extracted from ses_get_devices function

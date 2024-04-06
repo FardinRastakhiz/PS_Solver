@@ -25,7 +25,7 @@ using namespace std::chrono;
 namespace ses {
 	template<class mat_T, class vec_T>
 	SimplePetscSolver<mat_T, vec_T>::SimplePetscSolver(SolverArgs args) :
-		PetscSolver<mat_T, vec_T>(args) {
+	PetscSolver<mat_T, vec_T>(args) {
 		SetLocalTypes(args);
 	}
 	template<class mat_T, class vec_T>

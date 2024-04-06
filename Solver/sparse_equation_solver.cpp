@@ -161,7 +161,6 @@ CXDLL_API void* ses_solve_pressure_cpu(int num_rows, int nnz, int* row_indices, 
 	// create solvers and solve the matrix
 	solver_container->solver = std::make_unique<SimplePetscSolver<PETSC_MAT,PETSC_VEC >>(args);
 
-	std::cout << "3333333333333333: " << typeid(solver_container->solver.get()).name() << std::endl;
 	if (SimplePetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimplePetscSolver<PETSC_MAT, PETSC_VEC >*>(solver_container->solver.get()))
 	{
 		std::cout << "3333333333333333: " << typeid(solver_container->solver.get()).name() << std::endl;
@@ -191,7 +190,8 @@ CXDLL_API void* ses_solve_begin_density_cpu(int num_rows, int num_non_zero, int*
 	if (SequentialPetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >*>(solver_container->solver.get()))
 	{
 		
-		c->SetOptions(use_open_mp == 0 ? PetscBackend::NORMAL : PetscBackend::OPENMP, 0, 0, num_threads);
+		c->SetOptions(use_open_mp == 0 ? PetscBackend::NORMAL : PetscBackend::OPENMP, 0, 0, num_threads, iteration_count, precision);
+		c->Initialize();
 		c->Solve(iteration_count, precision);
 		// Get the result
 		x = ses::cast_to<double>(c->GetResult(), num_rows);
@@ -222,13 +222,14 @@ CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int*
 		SolverArgs args(num_rows, num_rows, num_non_zero, row_indices, col_indices, values, b , x, GMRES);
 
 		// create solvers and solve the matrix
-		solver_container->solver = std::make_unique<SimplePetscSolver<PETSC_MAT, PETSC_VEC >>(args);
+		solver_container->solver = std::make_unique<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >>(args);
+		std::cout << "here is the before if" << std::endl;
 
-		std::cout << "44444444444: " << typeid(solver_container->solver.get()).name() << std::endl;
 		if (SequentialPetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >*>(solver_container->solver.get()))
 		{
 			std::cout << "44444444444: " << typeid(solver_container->solver.get()).name() << std::endl;
-			c->SetOptions(PetscBackend::OPENCL , platform , device);
+			c->SetOptions(PetscBackend::OPENCL , platform , device, iteration_count, precision);
+			c->Initialize();
 			c->Solve(iteration_count, precision);
 			// Get the result
 			x = ses::cast_to<double>(c->GetResult(), num_rows);
@@ -252,7 +253,7 @@ CXDLL_API int ses_solve_next(SolverContainer* solver_container, double* rhs, dou
 		{
 			std::cout << "bbbb: " << std::endl;
 			c->SetNewB(rhs);
-			c->Solve(c->b, iteration_count, precision);
+			c->Solve(iteration_count, precision);
 
 		}
 		break;
@@ -262,7 +263,7 @@ CXDLL_API int ses_solve_next(SolverContainer* solver_container, double* rhs, dou
 		{
 			std::cout << "ffff: " << std::endl;
 			c->SetNewB(rhs);
-			c->Solve(c->b, iteration_count, precision);
+			c->Solve(iteration_count, precision);
 
 		}
 		break;
