@@ -81,6 +81,6 @@
 		<File RelativePath=".\src_slatec\y12mdf.f"/></Filter>
 		<File RelativePath=".\mainDensity.f90"/>
 		<File RelativePath=".\mainPressure.f90"/>
-		<File RelativePath="..\..\2024 new data\20240303_PS_Solver_With_Dependencies\PS_Solver_With_Dependencies\PS_Solver\matrixBuilder.f90"/>
+		<File RelativePath=".\matrixBuilder.f90"/>
 		<File RelativePath=".\saveVtk.f90"/></Filter></Files>
 	<Globals/></VisualStudioProject>
