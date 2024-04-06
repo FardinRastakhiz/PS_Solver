@@ -223,7 +223,6 @@ CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int*
 
 		// create solvers and solve the matrix
 		solver_container->solver = std::make_unique<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >>(args);
-		std::cout << "here is the before if" << std::endl;
 
 		if (SequentialPetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >*>(solver_container->solver.get()))
 		{

@@ -21,6 +21,7 @@ namespace ses {
 		void Finalize();
 		LocalType* GetResult() override;
 		int initialized;
+		int iter_count;
 		KSP ksp;
 	private:
 		KSPType GetKSPType(Algorithm alg);

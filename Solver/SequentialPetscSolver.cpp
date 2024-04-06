@@ -22,6 +22,7 @@ namespace ses {
 	}
 	template<class mat_T, class vec_T>
 	void SequentialPetscSolver<mat_T, vec_T>::Initialize() {
+		this->iter_count = 0;
 		std::cout << "in the initialize function" << std::endl;
 		PetscErrorCode ierr;
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
@@ -63,6 +64,8 @@ namespace ses {
 		this->ksp = ksp;
 		if(this->initialized == 0) PetscPrintf(PETSC_COMM_WORLD, "Solved For The First Time");
 		this->initialized = 1;
+		this->iter_count += 1;
+		PetscPrintf(PETSC_COMM_WORLD, "Solved %d times \n", iter_count);
 		
 	}
 	// call below function always before solve function
@@ -88,20 +91,6 @@ namespace ses {
 		if (precision != -1.0)
 			PetscOptionsSetValue(NULL, "-ksp_atol", std::to_string(precision).c_str());
 	}
-	//template<typename mat_T, typename vec_T>
-	//void SequentialPetscSolver<mat_T, vec_T>::Solve(vec_T b, int iteration_count, LocalType precision) {
-	//	PetscErrorCode ierr;
-	//	this->b = b;
-	//	auto start = high_resolution_clock::now();
-	//	ierr = KSPSolve(ksp, this->b, this->x);
-	//	auto stop = high_resolution_clock::now();
-	//	auto duration = duration_cast<microseconds>(stop - start);
-	//	PetscPrintf(PETSC_COMM_WORLD, "Time taken by solver: %d microseconds \n", duration.count());
-	//	PetscInt its;
-	//	KSPGetIterationNumber(ksp, &its);
-	//	PetscPrintf(PETSC_COMM_WORLD, "Solved With %d Iterations \n", its);
-	//	
-	//}
 	template<typename mat_T, typename vec_T>
 	void SequentialPetscSolver<mat_T, vec_T>::SetNewB(LocalType* b) {
 		create_petsc_vector(this->args.num_rows, this->b);
