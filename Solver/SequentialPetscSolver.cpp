@@ -47,6 +47,7 @@ namespace ses {
 		if (this->initialized == 0) {
 			ierr = KSPCreate(PETSC_COMM_WORLD, &ksp);
 			ierr = KSPSetType(ksp, GetKSPType(this->algorithm));
+			KSPSetInitialGuessNonzero(ksp, PETSC_TRUE);
 			ierr = KSPSetOperators(ksp, this->A, this->A);
 			ierr = KSPSetFromOptions(ksp);
 		}
@@ -65,6 +66,9 @@ namespace ses {
 		if(this->initialized == 0) PetscPrintf(PETSC_COMM_WORLD, "Solved For The First Time");
 		this->initialized = 1;
 		this->iter_count += 1;
+		this->PrintX();
+		this->PrintA();
+		this->PrintB();
 		PetscPrintf(PETSC_COMM_WORLD, "Solved %d times \n", iter_count);
 		
 	}
@@ -86,6 +90,10 @@ namespace ses {
 		}
 		//setting the preconditioner
 		PetscOptionsSetValue(NULL, "-pc_type", "jacobi");
+		//PetscOptionsSetValue(NULL, "-pc_type", "icc");
+		//PetscOptionsSetValue(NULL, "-pc_type", "ksp");
+		//PetscOptionsSetValue(NULL, "-pc_type", "gasm");
+		//PetscOptionsSetValue(NULL, "-pc_type", "bjacobi");
 		if (iteration_count != -1)
 			PetscOptionsSetValue(NULL, "-ksp_max_it", std::to_string(iteration_count).c_str());
 		if (precision != -1.0)
@@ -112,10 +120,69 @@ namespace ses {
 		// Optional: Print the solution
 		PetscViewer viewer;
 		PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_x.txt", &viewer); // open an ASCII file for writing
+		if(this->iter_count == 1)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_x_1.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 2)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_x_2.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 3)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_x_3.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 4)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_x_4.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 5)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_x_5.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 6)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_x_6.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 7)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_x_7.txt", &viewer); // open an ASCII file for writing
 		VecView(this->x, viewer); // save the vector to the file
 		PetscViewerDestroy(&viewer); // close the file
 	}
 
+	template<class mat_T, class vec_T>
+	void SequentialPetscSolver<mat_T, vec_T>::PrintA() {
+		// Optional: Print the solution
+		PetscViewer viewer;
+		PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_a.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 1)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_a_1.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 2)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_a_2.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 3)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_a_3.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 4)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_a_4.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 5)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_a_5.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 6)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_a_6.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 7)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_a_7.txt", &viewer); // open an ASCII file for writing
+		MatView(this->A, viewer); // save the vector to the file
+		PetscViewerDestroy(&viewer); // close the file
+	}
+
+	template<class mat_T, class vec_T>
+	void SequentialPetscSolver<mat_T, vec_T>::PrintB() {
+		// Optional: Print the solution
+		PetscViewer viewer;
+		PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_b.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 1)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_b_1.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 2)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_b_2.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 3)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_b_3.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 4)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_b_4.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 5)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_b_5.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 6)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_b_6.txt", &viewer); // open an ASCII file for writing
+		if (this->iter_count == 7)
+			PetscViewerASCIIOpen(PETSC_COMM_SELF, "petsc_b_7.txt", &viewer); // open an ASCII file for writing
+		VecView(this->b, viewer); // save the vector to the file
+		PetscViewerDestroy(&viewer); // close the file
+	}
 	template<class mat_T, class vec_T>
 	void SequentialPetscSolver<mat_T, vec_T>::Finalize() {
 		VecDestroy(&this->x);

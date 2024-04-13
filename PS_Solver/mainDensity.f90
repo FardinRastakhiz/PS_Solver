@@ -550,8 +550,10 @@
     !else
     !    WRITE(*  ,'(A45)')," solverReturnFlag: IERR /= 0 => Not Succeed!!"
     !ENDIF
+    
+    
     if(solverLibrary.eq.1)THEN
-        solver_pointer = ses_solve_begin_density_cpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, iterationCount, precision, useOpenMp, numOfThreads)
+        solver_pointer = ses_solve_pressure_cpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, iterationCount, precision, useOpenMp, numOfThreads)
     endif
     
     ! solve using gpu
@@ -559,7 +561,7 @@
         ! here first we need to take platforms and devices
         returnValue = ses_write_devices_to_file()
         ! choose your platform and device by index - indices start from 0
-        solver_pointer = ses_solve_begin_density_gpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, solverLibrary, iterationCount, precision, platform , device)
+        solver_pointer = ses_solve_pressure_gpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, solverLibrary, iterationCount, precision, platform , device)
         
     endif
     WRITE(*, *)," Min pr= ", minval(pr_act), " Min pr= ", maxval(pr_act)
@@ -607,10 +609,10 @@
         endif
 
         if(poreBnd( CONF(2,I) ) .EQ. 1 .and. poreBnd( CONF(1,I) ) .EQ. 1)then
-            WRITE(* ,'(A)'), " INLET-INLET!!!! "; pause
+            WRITE(* ,'(A)'), " INLET-INLET!!!! "; !pause
         endif
         if(poreBnd( CONF(2,I) ) .EQ. 2 .and. poreBnd( CONF(1,I) ) .EQ. 2)then
-            WRITE(* ,'(A)'), " OUTLET-OUTLET!!!! "; pause
+            WRITE(* ,'(A)'), " OUTLET-OUTLET!!!! "; !pause
         endif
 
         IF(  poreBnd( CONF(1,I) ) .EQ. 1 .OR. poreBnd( CONF(2,I) ) .EQ. 1)THEN
@@ -725,7 +727,7 @@
 
     
     !note: this loop is now 10000. Normally it is much higher 
-    DO I = 1,10000
+    DO I = 1,20
         
         DO J=1,NNODE
             IF(poreBnd(J).EQ.1)THEN
@@ -742,9 +744,22 @@
         !else
         !    WRITE(*  ,'(A45)')," solverReturnFlag: IERR /= 0 => Not Succeed!!"
         !ENDIF
+        IF(I.EQ.1) THEN
+            if(solverLibrary.eq.1)THEN
+                solver_pointer = ses_solve_begin_density_cpu(nnode, nnz, ai, aj, bc, rhs, conc_node, iterationCount, precision, useOpenMp, numOfThreads)
+            endif
+    
+            ! solve using gpu
+            if(solverLibrary.eq.2 .or. solverLibrary.eq.3)THEN
+                ! here first we need to take platforms and devices
+                returnValue = ses_write_devices_to_file()
+                ! choose your platform and device by index - indices start from 0
+                solver_pointer = ses_solve_begin_density_gpu(nnode, nnz, ai, aj, bc, rhs, conc_node, solverLibrary, iterationCount, precision, platform , device)
         
-        returnValue = ses_solve_next(solver_pointer, rhs, pr_act,iterationCount, precision)
-
+            endif
+        ELSE
+            returnValue = ses_solve_next(solver_pointer, rhs, conc_node,iterationCount, precision)
+        ENDIF
         WRITE(*, *)," Min conc_node= ", minval(conc_node), " Max conc_node= ", maxval(conc_node)
         
         DO J=1,NTUBE
@@ -755,5 +770,7 @@
     ENDDO
 
 
-
+  ! Wait for user input before exiting
+    write(*,*) "Press Enter to exit"
+    read(*,*)
     end program Main

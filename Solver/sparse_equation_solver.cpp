@@ -206,11 +206,8 @@ CXDLL_API void* ses_solve_begin_density_cpu(int num_rows, int num_non_zero, int*
 CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int* row_indices, int* col_indices, double* values, double* b, double* x,int target_lib, int iteration_count , int precision , int platform , int device){
 
 	SolverContainer* solver_container = new SolverContainer();
-	std::cout << "1" << std::endl;
 	solver_container->target_library = (TargetLibrary)target_lib;
-	std::cout << "2" << std::endl;
 	sample_f = 15.0f;
-	std::cout << "3: " << sample_f << std::endl;
 	if (solver_container->target_library == VIENNA_CL_GPU) {
 		SolverArgs args(num_rows, num_rows, num_non_zero, row_indices, col_indices, values, b , x, GMRES);
 
@@ -226,7 +223,6 @@ CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int*
 
 		if (SequentialPetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >*>(solver_container->solver.get()))
 		{
-			std::cout << "44444444444: " << typeid(solver_container->solver.get()).name() << std::endl;
 			c->SetOptions(PetscBackend::OPENCL , platform , device, iteration_count, precision);
 			c->Initialize();
 			c->Solve(iteration_count, precision);
@@ -234,47 +230,38 @@ CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int*
 			x = ses::cast_to<double>(c->GetResult(), num_rows);
 		}
 	}
-	std::cout << "4: " << sample_f << std::endl;
 	return (void*)solver_container;
 	
 }
 
 CXDLL_API int ses_solve_next(SolverContainer* solver_container, double* rhs, double* x, int iteration_count, int precision) {
-	std::cout << "a" << std::endl;
-	std::cout << "b: " << typeid(solver_container->solver.get()).name() << std::endl;
 	switch ((TargetLibrary)(solver_container->target_library))
 	{
 	//case PETSC_GPU:
 
 	case PETSC_CPU:
-		std::cout << "aaaa: " << std::endl;
 		if (SequentialPetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >*>(solver_container->solver.get()))
 		{
-			std::cout << "bbbb: " << std::endl;
 			c->SetNewB(rhs);
 			c->Solve(iteration_count, precision);
 
 		}
 		break;
 	case PETSC_GPU:
-		std::cout << "eeee: " << std::endl;
 		if (SequentialPetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >*>(solver_container->solver.get()))
 		{
-			std::cout << "ffff: " << std::endl;
 			c->SetNewB(rhs);
 			c->Solve(iteration_count, precision);
 
 		}
 		break;
 	case VIENNA_CL_GPU:
-		std::cout << "ccccc: " << std::endl;
 		SequentialViennaSolver<VI_SELL_MAT, VI_VEC>* gpu_seq_solver =
 			dynamic_cast<SequentialViennaSolver<VI_SELL_MAT, VI_VEC>*>(solver_container->solver.get());
 		assert((gpu_seq_solver), "It is not a Sequential Solver");
 		gpu_seq_solver->Solve(rhs, iteration_count == -1 ? solver_container->default_iteration_count : iteration_count, precision == -1 ? solver_container->default_precision : precision);
 		break;
 	}
-	std::cout << "ddddd: " << std::endl;
 	x = solver_container->solver->GetResult();
 	return 0;
 }
