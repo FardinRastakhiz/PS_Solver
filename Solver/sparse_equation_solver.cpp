@@ -97,16 +97,17 @@ CXDLL_API int ses_write_devices_to_file() {
 	return 0;
 }
 
-CXDLL_API int ses_build_initial_guess(int numRows, int numRowsAct, double* locX, double* locY, double* locZ, double* locActX, double* locActY, double* locActZ, int* bnd, double* x) {
+CXDLL_API int ses_build_initial_guess(int numRows, int numRowsAct, double* locX, double* locY, double* locZ, double* locActX, double* locActY, double* locActZ, int* bnd, double* x, double** x_out) {
 	std::cout << "hello world";
 	InitialGuessBuilder* builder = new InitialGuessBuilder();
 	// set any options here
 	//builder->COORDINATES_MIN_NODES = 1000;
 	builder->build_with_coordinates(numRows, numRowsAct, locX, locY, locZ, locActX, locActY, locActZ, bnd, x);
+	*x_out = x;
 	return 0;
 }
 
-CXDLL_API void* ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, int* col_indices, double * values, double* b, double* x, int target_lib, int iteration_count, double precision, int platform , int device , int preconditioner) {
+CXDLL_API void* ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, int* col_indices, double * values, double* b, double* x, double** x_out, int target_lib, int iteration_count, double precision, int platform , int device , int preconditioner) {
 	std::cout << '1' << std::endl;
 	std::cout << '2' << std::endl;
 	SolverContainer* solver_container = new SolverContainer();
@@ -121,7 +122,6 @@ CXDLL_API void* ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, 
 
 		// Get the result
 		x = ses::cast_to<double>(solver_container->solver->GetResult(), num_rows);
-
 		auto new_b = ses::cast_to<double>(solver_container->solver->CalculateB(), num_rows);
 		//std::cout << x1[0] << std::endl;
 		//std::cout << x1[1] << std::endl;
@@ -160,12 +160,13 @@ CXDLL_API void* ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, 
 		}
 	}
 	std::cout << '15' << std::endl;
+	*x_out = x;
 	
 	return (void*)solver_container;
 }
 
 
-CXDLL_API void* ses_solve_pressure_cpu(int num_rows, int nnz, int* row_indices, int* col_indices, double* values, double* b, double* x,int iteration_count, double precision,int use_open_mp ,int num_threads, int preconditioner) {
+CXDLL_API void* ses_solve_pressure_cpu(int num_rows, int nnz, int* row_indices, int* col_indices, double* values, double* b, double* x, double** x_out,int iteration_count, double precision,int use_open_mp ,int num_threads, int preconditioner) {
 	//cout << "here is the initialized x last 100 rows" << endl;
 
 	SolverArgs args(num_rows, num_rows, nnz, row_indices, col_indices, values, b , x, CG);
@@ -181,19 +182,19 @@ CXDLL_API void* ses_solve_pressure_cpu(int num_rows, int nnz, int* row_indices, 
 		c->Initialize();
 		c->Solve(iteration_count, precision);
 		// Get the result
-		//x = ses::cast_to<double>(c->GetResult(), num_rows);
+		x = ses::cast_to<double>(c->GetResult(), num_rows);
 		save_vector_pointer(c->GetResult(), num_rows, "output_x.txt");
 		c->PrintX();
 		c->PrintResultB();
 		c->Finalize();
 	}
-	
+	*x_out = x;
 	//for (int i = num_rows - 2000; i < num_rows; i++) {
 	//	cout << x[i] << endl;
 	//}
 	return (void*)solver_container;
 }
-CXDLL_API void* ses_solve_begin_density_cpu(int num_rows, int num_non_zero, int* row_indices, int* col_indices, double* values, double* b, double* x , int iteration_count, double precision, int use_open_mp, int num_threads, int preconditioner) {
+CXDLL_API void* ses_solve_begin_density_cpu(int num_rows, int num_non_zero, int* row_indices, int* col_indices, double* values, double* b, double* x, double** x_out , int iteration_count, double precision, int use_open_mp, int num_threads, int preconditioner) {
 	SolverArgs args(num_rows, num_rows, num_non_zero, row_indices, col_indices, values, b, x, GMRES);
 
 	SolverContainer* solver_container = new SolverContainer();
@@ -210,13 +211,14 @@ CXDLL_API void* ses_solve_begin_density_cpu(int num_rows, int num_non_zero, int*
 		x = ses::cast_to<double>(c->GetResult(), num_rows);
 		solver_container->target_library = PETSC_CPU;
 	}
+	*x_out = x;
 
 	return (void*)solver_container;
 }
 
 
 //
-CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int* row_indices, int* col_indices, double* values, double* b, double* x,int target_lib, int iteration_count , int precision , int platform , int device, int preconditioner){
+CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int* row_indices, int* col_indices, double* values, double* b, double* x, double** x_out,int target_lib, int iteration_count , int precision , int platform , int device, int preconditioner){
 
 	SolverContainer* solver_container = new SolverContainer();
 	solver_container->target_library = (TargetLibrary)target_lib;
@@ -243,11 +245,13 @@ CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int*
 			x = ses::cast_to<double>(c->GetResult(), num_rows);
 		}
 	}
+	*x_out = x;
+
 	return (void*)solver_container;
 	
 }
 
-CXDLL_API int ses_solve_next(SolverContainer* solver_container, double* rhs, double* x, int iteration_count, int precision) {
+CXDLL_API int ses_solve_next(SolverContainer* solver_container, double* rhs, double* x, double** x_out, int iteration_count, int precision) {
 	switch ((TargetLibrary)(solver_container->target_library))
 	{
 	//case PETSC_GPU:
@@ -276,5 +280,6 @@ CXDLL_API int ses_solve_next(SolverContainer* solver_container, double* rhs, dou
 		break;
 	}
 	x = solver_container->solver->GetResult();
+	*x_out = x;
 	return 0;
 }

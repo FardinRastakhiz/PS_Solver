@@ -113,6 +113,7 @@
     integer :: nnz
     integer,dimension(:),allocatable:: ai, aj
     doubleprecision,dimension(:),allocatable:: pr_act, bc, rhs
+    type(c_ptr):: pr_act2
     doubleprecision:: pr_inlet, pr_outlet
 
     !calucing Q
@@ -142,7 +143,7 @@
 
         ! c++ solvers parameters
     ! below codes can be defined somewhere else
-    integer :: solverLibrary = 2 ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
+    integer :: solverLibrary = 1 ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
     integer :: useOpenMp = 1 ! acceptable values : 0 = dont use openMP , 1 = use openMP
     integer :: numOfThreads = 8 ! acceptable values : any positive integer value
     integer :: platform = 2 ! acceptable values should be extracted from ses_get_devices function
@@ -155,21 +156,23 @@
     
     ! c++ solvers interfaces
     interface
-        function ses_build_initial_guess(numRows, numRowsAct, locX , locY , locZ, locActX , locActY , locActZ, bnd, x) result(ok) bind(C, name="ses_build_initial_guess")
+        function ses_build_initial_guess(numRows, numRowsAct, locX , locY , locZ, locActX , locActY , locActZ, bnd, x, x_out) result(ok) bind(C, name="ses_build_initial_guess")
             use iso_c_binding
             integer(c_int) :: ok
             integer(c_int), value :: numRows , numRowsAct
             integer(c_int), dimension(*) :: bnd
             doubleprecision, dimension(*) :: locX , locY , locZ , locActX , locActY , locActZ
+            type(c_ptr), intent(in) :: x_out
             doubleprecision, dimension(*), intent(out) :: x
         end function ses_build_initial_guess
     end interface
     interface
-        function ses_solve_pressure_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, iterationCount, precision, useOpenMp, numOfThreads, preconditioner) bind(C, name="ses_solve_pressure_cpu")
+        function ses_solve_pressure_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, x_out, iterationCount, precision, useOpenMp, numOfThreads, preconditioner) bind(C, name="ses_solve_pressure_cpu")
             use iso_c_binding
             integer(c_int), value :: numRows, numNonzero, iterationCount, useOpenMp, numOfThreads, preconditioner
             integer(c_int), dimension(*) :: rowIndices, colIndices
             real(c_double), dimension(*) :: values, b
+            type(c_ptr), intent(in) :: x_out
             real(c_double), dimension(*), intent(out) :: x
             real(c_double), value :: precision
             type(c_ptr) :: ses_solve_pressure_cpu
@@ -177,11 +180,12 @@
     end interface
     
     interface
-        function ses_solve_pressure_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, solverLibrary, iterationCount, precision, platform , device, preconditioner) bind(C, name="ses_solve_pressure_gpu")
+        function ses_solve_pressure_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, x_out, solverLibrary, iterationCount, precision, platform , device, preconditioner) bind(C, name="ses_solve_pressure_gpu")
             use iso_c_binding
             integer(c_int), value :: numRows, numNonzero, solverLibrary, iterationCount, platform, device, preconditioner
             integer(c_int), dimension(*) :: rowIndices, colIndices
             real(c_double), dimension(*) :: values, b
+            type(c_ptr), intent(in) :: x_out
             real(c_double), dimension(*) , intent(out) :: x
             real(c_double), value :: precision
             type(c_ptr) :: ses_solve_pressure_gpu
@@ -189,11 +193,12 @@
     end interface
     
     interface
-        function ses_solve_begin_density_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, iterationCount, precision, useOpenMp, numOfThreads, preconditioner) bind(C, name="ses_solve_begin_density_cpu")
+        function ses_solve_begin_density_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, x_out, iterationCount, precision, useOpenMp, numOfThreads, preconditioner) bind(C, name="ses_solve_begin_density_cpu")
             use iso_c_binding
             integer(c_int), value :: numRows, numNonzero, iterationCount, useOpenMp, numOfThreads, preconditioner
             integer(c_int), dimension(*) :: rowIndices, colIndices
             real(c_double), dimension(*) :: values, b
+            type(c_ptr), intent(in) :: x_out
             real(c_double), dimension(*), intent(out) :: x
             real(c_double), value :: precision
             type(c_ptr) :: ses_solve_begin_density_cpu
@@ -201,11 +206,12 @@
     end interface
     
     interface
-        function ses_solve_begin_density_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, solverLibrary, iterationCount, precision, platform , device, preconditioner) bind(C, name="ses_solve_begin_density_gpu")
+        function ses_solve_begin_density_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, x_out, solverLibrary, iterationCount, precision, platform , device, preconditioner) bind(C, name="ses_solve_begin_density_gpu")
             use iso_c_binding
             integer(c_int), value :: numRows, numNonzero, solverLibrary, iterationCount, platform, device, preconditioner
             integer(c_int), dimension(*) :: rowIndices, colIndices
             real(c_double), dimension(*) :: values, b
+            type(c_ptr), intent(in) :: x_out
             real(c_double), dimension(*) , intent(out) :: x
             real(c_double), value :: precision
             type(c_ptr) :: ses_solve_begin_density_gpu
@@ -213,10 +219,11 @@
     end interface
     
     interface
-        function ses_solve_next(solver_container, b, x, iterationCount, precision) bind(C, name="ses_solve_next")
+        function ses_solve_next(solver_container, b, x, x_out, iterationCount, precision) bind(C, name="ses_solve_next")
             use iso_c_binding
             integer(c_int), value :: iterationCount
             real(c_double), dimension(*) :: b
+            type(c_ptr), intent(in) :: x_out
             real(c_double), dimension(*) , intent(out) :: x
             real(c_double), value :: precision
             type(c_ptr), value :: solver_container
@@ -554,7 +561,8 @@
     
     
     if(solverLibrary.eq.1)THEN
-        solver_pointer = ses_solve_pressure_cpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, iterationCount, precision, useOpenMp, numOfThreads, preconditioner)
+        solver_pointer = ses_solve_pressure_cpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, pr_act2, iterationCount, precision, useOpenMp, numOfThreads, preconditioner)
+        call c_f_pointer(pr_act2, pr_act,[nnode_act])
     endif
     
     ! solve using gpu
@@ -562,8 +570,8 @@
         ! here first we need to take platforms and devices
         returnValue = ses_write_devices_to_file()
         ! choose your platform and device by index - indices start from 0
-        solver_pointer = ses_solve_pressure_gpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, solverLibrary, iterationCount, precision, platform , device, preconditioner)
-        
+        solver_pointer = ses_solve_pressure_gpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, pr_act2, solverLibrary, iterationCount, precision, platform , device, preconditioner)
+        call c_f_pointer(pr_act2, pr_act,[nnode_act])
     endif
     WRITE(*, *)," Min pr= ", minval(pr_act), " Min pr= ", maxval(pr_act)
 
@@ -747,7 +755,8 @@
         !ENDIF
         IF(I.EQ.1) THEN
             if(solverLibrary.eq.1)THEN
-                solver_pointer = ses_solve_begin_density_cpu(nnode, nnz, ai, aj, bc, rhs, conc_node, iterationCount, precision, useOpenMp, numOfThreads, preconditioner)
+                solver_pointer = ses_solve_begin_density_cpu(nnode, nnz, ai, aj, bc, rhs, conc_node, pr_act2, iterationCount, precision, useOpenMp, numOfThreads, preconditioner)
+                call c_f_pointer(pr_act2, conc_node,[nnode])
             endif
     
             ! solve using gpu
@@ -755,11 +764,13 @@
                 ! here first we need to take platforms and devices
                 returnValue = ses_write_devices_to_file()
                 ! choose your platform and device by index - indices start from 0
-                solver_pointer = ses_solve_begin_density_gpu(nnode, nnz, ai, aj, bc, rhs, conc_node, solverLibrary, iterationCount, precision, platform , device, preconditioner)
+                solver_pointer = ses_solve_begin_density_gpu(nnode, nnz, ai, aj, bc, rhs, conc_node, pr_act2, solverLibrary, iterationCount, precision, platform , device, preconditioner)
+                call c_f_pointer(pr_act2, conc_node,[nnode])
         
             endif
         ELSE
-            returnValue = ses_solve_next(solver_pointer, rhs, conc_node,iterationCount, precision)
+            returnValue = ses_solve_next(solver_pointer, rhs, conc_node, pr_act2,iterationCount, precision)
+            call c_f_pointer(pr_act2, conc_node,[nnode])
         ENDIF
         WRITE(*, *)," Min conc_node= ", minval(conc_node), " Max conc_node= ", maxval(conc_node)
         
