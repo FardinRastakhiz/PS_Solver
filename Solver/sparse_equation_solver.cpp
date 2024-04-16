@@ -66,19 +66,32 @@ CXDLL_API int ses_write_devices_to_file() {
 	std::ofstream file(devicesFilePath);
 	if (file.is_open())
 	{
+		file << "{" << endl;
+		file << "	\"platforms\" : [" << endl;
 		int max_len = viennacl::ocl::get_platforms().size();
 		for (int i = 0; i < max_len; i++) {
 			try {
 				std::vector<viennacl::ocl::device> devices = viennacl::ocl::get_platforms()[i].devices();
-				file << viennacl::ocl::get_platforms()[i].info() << "-----" << devices.size() << endl;
+				file << "		\"" << viennacl::ocl::get_platforms()[i].info() << "\" : [" << endl;
 				for (int j = 0; j < devices.size(); j++) {
-					file << devices[j].name() << endl;
+					file << "			\"" << devices[j].name() << "\"";
+					if (j != devices.size() - 1) {
+						file << ',';
+					}
+						file << endl;
 				}
+				file << "		]";
+				if (i != max_len - 1) {
+					file << ',';
+				}
+				file << endl;
 			}
 			catch(exception){
 				//do nothing. must continue
 			}
 		}
+		file << "	]" << endl;
+		file << "}";
 		file.close();
 	}
 	return 0;
@@ -93,7 +106,7 @@ CXDLL_API int ses_build_initial_guess(int numRows, int numRowsAct, double* locX,
 	return 0;
 }
 
-CXDLL_API void* ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, int* col_indices, double * values, double* b, double* x, int target_lib, int iteration_count, double precision, int platform , int device) {
+CXDLL_API void* ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, int* col_indices, double * values, double* b, double* x, int target_lib, int iteration_count, double precision, int platform , int device , int preconditioner) {
 	std::cout << '1' << std::endl;
 	std::cout << '2' << std::endl;
 	SolverContainer* solver_container = new SolverContainer();
@@ -133,7 +146,7 @@ CXDLL_API void* ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, 
 		{
 			std::cout << '9' << std::endl;
 			
-			c->SetOptions(PetscBackend::OPENCL, platform, device, iteration_count, precision);
+			c->SetOptions(PetscBackend::OPENCL, platform, device,8, iteration_count, precision,preconditioner);
 			std::cout << '10' << std::endl;
 			c->Initialize();
 			std::cout << '11' << std::endl;
@@ -152,7 +165,7 @@ CXDLL_API void* ses_solve_pressure_gpu(int num_rows, int nnz, int* row_indices, 
 }
 
 
-CXDLL_API void* ses_solve_pressure_cpu(int num_rows, int nnz, int* row_indices, int* col_indices, double* values, double* b, double* x,int iteration_count, double precision,int use_open_mp ,int num_threads) {
+CXDLL_API void* ses_solve_pressure_cpu(int num_rows, int nnz, int* row_indices, int* col_indices, double* values, double* b, double* x,int iteration_count, double precision,int use_open_mp ,int num_threads, int preconditioner) {
 	//cout << "here is the initialized x last 100 rows" << endl;
 
 	SolverArgs args(num_rows, num_rows, nnz, row_indices, col_indices, values, b , x, CG);
@@ -164,7 +177,7 @@ CXDLL_API void* ses_solve_pressure_cpu(int num_rows, int nnz, int* row_indices, 
 	if (SimplePetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SimplePetscSolver<PETSC_MAT, PETSC_VEC >*>(solver_container->solver.get()))
 	{
 		std::cout << "3333333333333333: " << typeid(solver_container->solver.get()).name() << std::endl;
-		c->SetOptions(use_open_mp == 0 ? PetscBackend::NORMAL : PetscBackend::OPENMP, 0 , 0 , num_threads, iteration_count, precision);
+		c->SetOptions(use_open_mp == 0 ? PetscBackend::NORMAL : PetscBackend::OPENMP, 0 , 0 , num_threads, iteration_count, precision, preconditioner);
 		c->Initialize();
 		c->Solve(iteration_count, precision);
 		// Get the result
@@ -180,7 +193,7 @@ CXDLL_API void* ses_solve_pressure_cpu(int num_rows, int nnz, int* row_indices, 
 	//}
 	return (void*)solver_container;
 }
-CXDLL_API void* ses_solve_begin_density_cpu(int num_rows, int num_non_zero, int* row_indices, int* col_indices, double* values, double* b, double* x , int iteration_count, double precision, int use_open_mp, int num_threads) {
+CXDLL_API void* ses_solve_begin_density_cpu(int num_rows, int num_non_zero, int* row_indices, int* col_indices, double* values, double* b, double* x , int iteration_count, double precision, int use_open_mp, int num_threads, int preconditioner) {
 	SolverArgs args(num_rows, num_rows, num_non_zero, row_indices, col_indices, values, b, x, GMRES);
 
 	SolverContainer* solver_container = new SolverContainer();
@@ -190,7 +203,7 @@ CXDLL_API void* ses_solve_begin_density_cpu(int num_rows, int num_non_zero, int*
 	if (SequentialPetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >*>(solver_container->solver.get()))
 	{
 		
-		c->SetOptions(use_open_mp == 0 ? PetscBackend::NORMAL : PetscBackend::OPENMP, 0, 0, num_threads, iteration_count, precision);
+		c->SetOptions(use_open_mp == 0 ? PetscBackend::NORMAL : PetscBackend::OPENMP, 0, 0, num_threads, iteration_count, precision , preconditioner);
 		c->Initialize();
 		c->Solve(iteration_count, precision);
 		// Get the result
@@ -203,7 +216,7 @@ CXDLL_API void* ses_solve_begin_density_cpu(int num_rows, int num_non_zero, int*
 
 
 //
-CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int* row_indices, int* col_indices, double* values, double* b, double* x,int target_lib, int iteration_count , int precision , int platform , int device){
+CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int* row_indices, int* col_indices, double* values, double* b, double* x,int target_lib, int iteration_count , int precision , int platform , int device, int preconditioner){
 
 	SolverContainer* solver_container = new SolverContainer();
 	solver_container->target_library = (TargetLibrary)target_lib;
@@ -223,7 +236,7 @@ CXDLL_API void* ses_solve_begin_density_gpu(int num_rows, int num_non_zero,	int*
 
 		if (SequentialPetscSolver<PETSC_MAT, PETSC_VEC >* c = dynamic_cast<SequentialPetscSolver<PETSC_MAT, PETSC_VEC >*>(solver_container->solver.get()))
 		{
-			c->SetOptions(PetscBackend::OPENCL , platform , device, iteration_count, precision);
+			c->SetOptions(PetscBackend::OPENCL , platform , device, 8, iteration_count, precision , preconditioner);
 			c->Initialize();
 			c->Solve(iteration_count, precision);
 			// Get the result

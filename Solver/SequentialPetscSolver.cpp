@@ -74,7 +74,7 @@ namespace ses {
 	}
 	// call below function always before solve function
 	template<class mat_T, class vec_T>
-	void SequentialPetscSolver<mat_T, vec_T>::SetOptions(PetscBackend backend, int platform, int device, int num_threads, int iteration_count, LocalType precision) {
+	void SequentialPetscSolver<mat_T, vec_T>::SetOptions(PetscBackend backend, int platform, int device, int num_threads, int iteration_count, LocalType precision , int preconditioner) {
 		if (backend == PetscBackend::OPENMP) {
 			PetscOptionsSetValue(NULL, "-mat_type", "aijviennacl");
 			PetscOptionsSetValue(NULL, "-vec_type", "viennacl");
@@ -89,11 +89,36 @@ namespace ses {
 			PetscOptionsSetValue(NULL, "-viennacl_opencl_platform", std::to_string(platform).c_str());
 		}
 		//setting the preconditioner
-		PetscOptionsSetValue(NULL, "-pc_type", "jacobi");
-		//PetscOptionsSetValue(NULL, "-pc_type", "icc");
-		//PetscOptionsSetValue(NULL, "-pc_type", "ksp");
-		//PetscOptionsSetValue(NULL, "-pc_type", "gasm");
-		//PetscOptionsSetValue(NULL, "-pc_type", "bjacobi");
+		// acceptable values : 1 = jacobi, 2 = ILU, 3 = gasm, 4 = icc, 5 = ksp, 6 = bjacobi, 7 = sor, 8 = asm, 9 = cholesky
+		switch (preconditioner) {
+		case 1:
+			PetscOptionsSetValue(NULL, "-pc_type", "jacobi");
+			break;
+		case 2:
+			PetscOptionsSetValue(NULL, "-pc_type", "ilu");
+			break;
+		case 3:
+			PetscOptionsSetValue(NULL, "-pc_type", "gasm");
+			break;
+		case 4:
+			PetscOptionsSetValue(NULL, "-pc_type", "icc");
+			break;
+		case 5:
+			PetscOptionsSetValue(NULL, "-pc_type", "ksp");
+			break;
+		case 6:
+			PetscOptionsSetValue(NULL, "-pc_type", "bjacobi");
+			break;
+		case 7:
+			PetscOptionsSetValue(NULL, "-pc_type", "sor");
+			break;
+		case 8:
+			PetscOptionsSetValue(NULL, "-pc_type", "asm");
+			break;
+		case 9:
+			PetscOptionsSetValue(NULL, "-pc_type", "cholesky");
+			break;
+		}
 		if (iteration_count != -1)
 			PetscOptionsSetValue(NULL, "-ksp_max_it", std::to_string(iteration_count).c_str());
 		if (precision != -1.0)

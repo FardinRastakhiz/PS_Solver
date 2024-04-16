@@ -142,13 +142,14 @@
 
         ! c++ solvers parameters
     ! below codes can be defined somewhere else
-    integer :: solverLibrary = 2; ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
-    integer :: useOpenMp = 1; ! acceptable values : 0 = dont use openMP , 1 = use openMP
-    integer :: numOfThreads = 8; ! acceptable values : any positive integer value
+    integer :: solverLibrary = 2 ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
+    integer :: useOpenMp = 1 ! acceptable values : 0 = dont use openMP , 1 = use openMP
+    integer :: numOfThreads = 8 ! acceptable values : any positive integer value
     integer :: platform = 2 ! acceptable values should be extracted from ses_get_devices function
     integer :: device = 0 ! acceptable values should be extracted from ses_get_devices function
     integer :: iterationCount = -1 ! acceptable values : -1 = default , any positive integer value
     real :: precision = -1 ! acceptable values : -1 = default , any positive double value
+    integer :: preconditioner = 7 ! acceptable values : 1 = jacobi, 2 = ILU, 3 = gasm, 4 = icc, 5 = ksp, 6 = bjacobi, 7 = sor, 8 = asm, 9 = cholesky
     integer :: returnValue
     type(c_ptr) :: solver_pointer
     
@@ -164,9 +165,9 @@
         end function ses_build_initial_guess
     end interface
     interface
-        function ses_solve_pressure_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, iterationCount, precision, useOpenMp, numOfThreads) bind(C, name="ses_solve_pressure_cpu")
+        function ses_solve_pressure_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, iterationCount, precision, useOpenMp, numOfThreads, preconditioner) bind(C, name="ses_solve_pressure_cpu")
             use iso_c_binding
-            integer(c_int), value :: numRows, numNonzero, iterationCount, useOpenMp, numOfThreads
+            integer(c_int), value :: numRows, numNonzero, iterationCount, useOpenMp, numOfThreads, preconditioner
             integer(c_int), dimension(*) :: rowIndices, colIndices
             real(c_double), dimension(*) :: values, b
             real(c_double), dimension(*), intent(out) :: x
@@ -176,9 +177,9 @@
     end interface
     
     interface
-        function ses_solve_pressure_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, solverLibrary, iterationCount, precision, platform , device) bind(C, name="ses_solve_pressure_gpu")
+        function ses_solve_pressure_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, solverLibrary, iterationCount, precision, platform , device, preconditioner) bind(C, name="ses_solve_pressure_gpu")
             use iso_c_binding
-            integer(c_int), value :: numRows, numNonzero, solverLibrary, iterationCount, platform, device
+            integer(c_int), value :: numRows, numNonzero, solverLibrary, iterationCount, platform, device, preconditioner
             integer(c_int), dimension(*) :: rowIndices, colIndices
             real(c_double), dimension(*) :: values, b
             real(c_double), dimension(*) , intent(out) :: x
@@ -188,9 +189,9 @@
     end interface
     
     interface
-        function ses_solve_begin_density_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, iterationCount, precision, useOpenMp, numOfThreads) bind(C, name="ses_solve_begin_density_cpu")
+        function ses_solve_begin_density_cpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, iterationCount, precision, useOpenMp, numOfThreads, preconditioner) bind(C, name="ses_solve_begin_density_cpu")
             use iso_c_binding
-            integer(c_int), value :: numRows, numNonzero, iterationCount, useOpenMp, numOfThreads
+            integer(c_int), value :: numRows, numNonzero, iterationCount, useOpenMp, numOfThreads, preconditioner
             integer(c_int), dimension(*) :: rowIndices, colIndices
             real(c_double), dimension(*) :: values, b
             real(c_double), dimension(*), intent(out) :: x
@@ -200,9 +201,9 @@
     end interface
     
     interface
-        function ses_solve_begin_density_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, solverLibrary, iterationCount, precision, platform , device) bind(C, name="ses_solve_begin_density_gpu")
+        function ses_solve_begin_density_gpu(numRows, numNonzero, rowIndices, colIndices, values, b, x, solverLibrary, iterationCount, precision, platform , device, preconditioner) bind(C, name="ses_solve_begin_density_gpu")
             use iso_c_binding
-            integer(c_int), value :: numRows, numNonzero, solverLibrary, iterationCount, platform, device
+            integer(c_int), value :: numRows, numNonzero, solverLibrary, iterationCount, platform, device, preconditioner
             integer(c_int), dimension(*) :: rowIndices, colIndices
             real(c_double), dimension(*) :: values, b
             real(c_double), dimension(*) , intent(out) :: x
@@ -553,7 +554,7 @@
     
     
     if(solverLibrary.eq.1)THEN
-        solver_pointer = ses_solve_pressure_cpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, iterationCount, precision, useOpenMp, numOfThreads)
+        solver_pointer = ses_solve_pressure_cpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, iterationCount, precision, useOpenMp, numOfThreads, preconditioner)
     endif
     
     ! solve using gpu
@@ -561,7 +562,7 @@
         ! here first we need to take platforms and devices
         returnValue = ses_write_devices_to_file()
         ! choose your platform and device by index - indices start from 0
-        solver_pointer = ses_solve_pressure_gpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, solverLibrary, iterationCount, precision, platform , device)
+        solver_pointer = ses_solve_pressure_gpu(nnode_act, nnz, ai, aj, bc, rhs, pr_act, solverLibrary, iterationCount, precision, platform , device, preconditioner)
         
     endif
     WRITE(*, *)," Min pr= ", minval(pr_act), " Min pr= ", maxval(pr_act)
@@ -746,7 +747,7 @@
         !ENDIF
         IF(I.EQ.1) THEN
             if(solverLibrary.eq.1)THEN
-                solver_pointer = ses_solve_begin_density_cpu(nnode, nnz, ai, aj, bc, rhs, conc_node, iterationCount, precision, useOpenMp, numOfThreads)
+                solver_pointer = ses_solve_begin_density_cpu(nnode, nnz, ai, aj, bc, rhs, conc_node, iterationCount, precision, useOpenMp, numOfThreads, preconditioner)
             endif
     
             ! solve using gpu
@@ -754,7 +755,7 @@
                 ! here first we need to take platforms and devices
                 returnValue = ses_write_devices_to_file()
                 ! choose your platform and device by index - indices start from 0
-                solver_pointer = ses_solve_begin_density_gpu(nnode, nnz, ai, aj, bc, rhs, conc_node, solverLibrary, iterationCount, precision, platform , device)
+                solver_pointer = ses_solve_begin_density_gpu(nnode, nnz, ai, aj, bc, rhs, conc_node, solverLibrary, iterationCount, precision, platform , device, preconditioner)
         
             endif
         ELSE
