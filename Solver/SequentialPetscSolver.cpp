@@ -66,9 +66,9 @@ namespace ses {
 		if(this->initialized == 0) PetscPrintf(PETSC_COMM_WORLD, "Solved For The First Time");
 		this->initialized = 1;
 		this->iter_count += 1;
-		this->PrintX();
+	/*	this->PrintX();
 		this->PrintA();
-		this->PrintB();
+		this->PrintB();*/
 		PetscPrintf(PETSC_COMM_WORLD, "Solved %d times \n", iter_count);
 		
 	}

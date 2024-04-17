@@ -261,7 +261,6 @@ CXDLL_API int ses_solve_next(SolverContainer* solver_container, double* rhs, dou
 		{
 			c->SetNewB(rhs);
 			c->Solve(iteration_count, precision);
-
 		}
 		break;
 	case PETSC_GPU:
@@ -269,7 +268,6 @@ CXDLL_API int ses_solve_next(SolverContainer* solver_container, double* rhs, dou
 		{
 			c->SetNewB(rhs);
 			c->Solve(iteration_count, precision);
-
 		}
 		break;
 	case VIENNA_CL_GPU:

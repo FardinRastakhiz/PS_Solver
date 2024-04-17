@@ -126,6 +126,7 @@
     doubleprecision,dimension(:),allocatable:: AREAV, VOLUMEV, POREV, Q_tot_node
     doubleprecision,dimension(:),allocatable:: COEFB,COEF1,COEF2,COEF3,COEF4
     doubleprecision,dimension(:),allocatable:: conc_node,  conc_edje
+    type(c_ptr):: conc_node2
     integer,dimension(:),allocatable::  UPnode,DownNODE
     doubleprecision:: DT, Dmol, lDiff, conc_inlet, DtPore, DtPipe, DtDiff
 
@@ -144,13 +145,13 @@
         ! c++ solvers parameters
     ! below codes can be defined somewhere else
     integer :: solverLibrary = 1 ! acceptable values : 1 = PETSC_CPU , 2 = PETSC_GPU , 3 = ViennaCL_GPU 
-    integer :: useOpenMp = 1 ! acceptable values : 0 = dont use openMP , 1 = use openMP
+    integer :: useOpenMp = 0 ! acceptable values : 0 = dont use openMP , 1 = use openMP
     integer :: numOfThreads = 8 ! acceptable values : any positive integer value
     integer :: platform = 2 ! acceptable values should be extracted from ses_get_devices function
     integer :: device = 0 ! acceptable values should be extracted from ses_get_devices function
     integer :: iterationCount = -1 ! acceptable values : -1 = default , any positive integer value
     real :: precision = -1 ! acceptable values : -1 = default , any positive double value
-    integer :: preconditioner = 7 ! acceptable values : 1 = jacobi, 2 = ILU, 3 = gasm, 4 = icc, 5 = ksp, 6 = bjacobi, 7 = sor, 8 = asm, 9 = cholesky
+    integer :: preconditioner = 1 ! acceptable values : 1 = jacobi, 2 = ILU, 3 = gasm, 4 = icc, 5 = ksp, 6 = bjacobi, 7 = sor, 8 = asm, 9 = cholesky
     integer :: returnValue
     type(c_ptr) :: solver_pointer
     
@@ -691,7 +692,7 @@
     IF(DtDiff.LT.Dt)THEN
         Dt=DtDiff
     ENDIF
-    Dt = 100 * Dt
+    Dt = 5000000 * Dt
     IF(Dt .LT. 0)THEN
         PRINT*,"ERROR! NEGATIVE Dt. Dt = ",Dt
     ENDIF
@@ -736,7 +737,7 @@
 
     
     !note: this loop is now 10000. Normally it is much higher 
-    DO I = 1,20
+    DO I = 1,1000
         
         DO J=1,NNODE
             IF(poreBnd(J).EQ.1)THEN
@@ -755,8 +756,8 @@
         !ENDIF
         IF(I.EQ.1) THEN
             if(solverLibrary.eq.1)THEN
-                solver_pointer = ses_solve_begin_density_cpu(nnode, nnz, ai, aj, bc, rhs, conc_node, pr_act2, iterationCount, precision, useOpenMp, numOfThreads, preconditioner)
-                call c_f_pointer(pr_act2, conc_node,[nnode])
+                solver_pointer = ses_solve_begin_density_cpu(nnode, nnz, ai, aj, bc, rhs, conc_node, conc_node2, iterationCount, precision, useOpenMp, numOfThreads, preconditioner)
+                call c_f_pointer(conc_node2, conc_node,[nnode])
             endif
     
             ! solve using gpu
@@ -764,13 +765,13 @@
                 ! here first we need to take platforms and devices
                 returnValue = ses_write_devices_to_file()
                 ! choose your platform and device by index - indices start from 0
-                solver_pointer = ses_solve_begin_density_gpu(nnode, nnz, ai, aj, bc, rhs, conc_node, pr_act2, solverLibrary, iterationCount, precision, platform , device, preconditioner)
-                call c_f_pointer(pr_act2, conc_node,[nnode])
+                solver_pointer = ses_solve_begin_density_gpu(nnode, nnz, ai, aj, bc, rhs, conc_node, conc_node2, solverLibrary, iterationCount, precision, platform , device, preconditioner)
+                call c_f_pointer(conc_node2, conc_node,[nnode])
         
             endif
         ELSE
-            returnValue = ses_solve_next(solver_pointer, rhs, conc_node, pr_act2,iterationCount, precision)
-            call c_f_pointer(pr_act2, conc_node,[nnode])
+            returnValue = ses_solve_next(solver_pointer, rhs, conc_node, conc_node2,iterationCount, precision)
+            call c_f_pointer(conc_node2, conc_node,[nnode])
         ENDIF
         WRITE(*, *)," Min conc_node= ", minval(conc_node), " Max conc_node= ", maxval(conc_node)
         
