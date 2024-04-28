@@ -59,39 +59,25 @@ namespace ses {
 			// calculating variance on x and y and z axis
 			LocalType x_inlets_variance = this->calc_variance_on_axis(numRows, locX, bnd, 1); // 1 is for inlets
 			LocalType x_outlets_variance = this->calc_variance_on_axis(numRows, locX, bnd, 2); // 2 is for outlets
-			//std::cout << "here we go : " << x_inlets_variance;
-			//std::cout << "for outlets : " << x_outlets_variance;
 			if (x_inlets_variance < this->COORDINATES_INLET_VARIANCE_TRESHOLD && x_outlets_variance < this->COORDINATES_OUTLET_VARIANCE_TRESHOLD) {
 				//means x is selected as wanted axis
-				cout << "x is selected" << endl;
 				this->coordinates_fill_vector_linear(numRowsAct, x, locActX, this->COORDINATES_LINEAR_FROM, this->COORDINATES_LINEAR_TO);
 				return;
 			}
 			LocalType y_inlets_variance = this->calc_variance_on_axis(numRows, locY, bnd, 1); // 1 is for inlets
 			LocalType y_outlets_variance = this->calc_variance_on_axis(numRows, locY, bnd, 2); // 2 is for outlets
-			//std::cout << "here we go : " << y_inlets_variance;
-			//std::cout << "for outlets : " << y_outlets_variance;
 			if (y_inlets_variance < this->COORDINATES_INLET_VARIANCE_TRESHOLD && y_outlets_variance < this->COORDINATES_OUTLET_VARIANCE_TRESHOLD) {
 				//means y is selected as wanted axis
-				cout << "y is selected" << endl;
 				this->coordinates_fill_vector_linear(numRowsAct, x, locActY, this->COORDINATES_LINEAR_FROM, this->COORDINATES_LINEAR_TO);
 				return;
 			}
 			LocalType z_inlets_variance = this->calc_variance_on_axis(numRows, locZ, bnd, 1); // 1 is for inlets
 			LocalType z_outlets_variance = this->calc_variance_on_axis(numRows, locZ, bnd, 2); // 2 is for outlets
-			//std::cout << "here we go : " << z_inlets_variance;
-			//std::cout << "for outlets : " << z_outlets_variance;
 			if (z_inlets_variance < this->COORDINATES_INLET_VARIANCE_TRESHOLD && z_outlets_variance < this->COORDINATES_OUTLET_VARIANCE_TRESHOLD) {
 				//means z is selected as wanted axis
-
-				cout << "z is selected" << endl;
 				this->coordinates_fill_vector_linear(numRowsAct, x, locActZ, this->COORDINATES_LINEAR_FROM, this->COORDINATES_LINEAR_TO);
 				return;
 			}
-			//cout << "here is the initialized x last 100 rows" << endl;
-			//for (int i = numRowsAct - 100; i < numRowsAct; i++) {
-			//	cout << x[i] << endl;
-			//}
 			
 		}
 

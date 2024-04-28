@@ -98,7 +98,6 @@ CXDLL_API int ses_write_devices_to_file() {
 }
 
 CXDLL_API int ses_build_initial_guess(int numRows, int numRowsAct, double* locX, double* locY, double* locZ, double* locActX, double* locActY, double* locActZ, int* bnd, double* x, double** x_out) {
-	std::cout << "hello world";
 	InitialGuessBuilder* builder = new InitialGuessBuilder();
 	// set any options here
 	//builder->COORDINATES_MIN_NODES = 1000;
