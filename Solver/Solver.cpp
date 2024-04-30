@@ -46,12 +46,6 @@ namespace ses {
 		s_b = cast_to_local(args.b, args.num_rows);
 		s_x = cast_to_local(args.x, args.num_rows);
 
-		//std::cout << s_values[0] << std::endl;
-		//std::cout << s_b[1] << std::endl;
-		//std::cout << s_values[0] << std::endl;
-		//std::cout << s_b[1] << std::endl;
-		//std::cout << s_values[0] << std::endl;
-
 	}
 
 

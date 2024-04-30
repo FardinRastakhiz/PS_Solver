@@ -104,7 +104,6 @@ namespace ses {
 
 	template<class mat_T, class vec_T>
 	void SimpleViennaSolver<mat_T, vec_T>::SetPlatform() {
-		std::cout << "SimpleViennaSolver.cpp - SetPlatform()" << std::endl;
 		std::vector<viennacl::ocl::platform> platforms = viennacl::ocl::get_platforms();
 		std::vector<viennacl::ocl::device> devices = platforms[2].devices(CL_DEVICE_TYPE_GPU);
 		viennacl::ocl::setup_context(0, devices[0]);
@@ -112,7 +111,6 @@ namespace ses {
 
 	template<class mat_T, class vec_T>
 	void SimpleViennaSolver<mat_T, vec_T>::SetLocalTypes(SolverArgs args) {
-		std::cout << "SimpleViennaSolver.cpp - SetLocalTypes(SolverArgs args)" << std::endl;
 		// create target library vectors and matrices
 		Solver<mat_T, vec_T>::SetLocalTypes(args);
 		/*VI_SELL_MAT mat; VI_VEC vec;*/
@@ -155,7 +153,6 @@ namespace ses {
 	template<class mat_T, class vec_T>
 	void SimpleViennaSolver<mat_T, vec_T>::PrintActiveDevice() {
 		viennacl::ocl::device current_device = viennacl::ocl::current_device();
-		std::cout << "current device is:" << current_device.name() << std::endl;
 	}
 
 

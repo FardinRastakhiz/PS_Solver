@@ -23,7 +23,6 @@ namespace ses {
 	template<class mat_T, class vec_T>
 	void SequentialPetscSolver<mat_T, vec_T>::Initialize() {
 		this->iter_count = 0;
-		std::cout << "in the initialize function" << std::endl;
 		PetscErrorCode ierr;
 		ierr = PetscInitialize(PETSC_NULL, PETSC_NULL, PETSC_NULL, PETSC_NULL);
 		PetscPrintf(PETSC_COMM_WORLD, "PETSC Initialized \n");
